@@ -1,10 +1,4 @@
--- ================================================================
---  INSAL deméritos — Full Schema Setup (Tables + Indexes + Seed Catalogs)
---  Run ONCE on a fresh PostgreSQL database
---  Usage: psql $DATABASE_URL -f scripts/setup-schema.sql
--- ================================================================
 
--- ── Core tables (replaces Prisma migration) ──────────────────────
 
 CREATE TABLE IF NOT EXISTS roles (
   rol_id   SERIAL PRIMARY KEY,
