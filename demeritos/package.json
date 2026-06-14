@@ -1,0 +1,44 @@
+{
+  "name": "demeritos-insal",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/start-dev.mjs",
+    "dev:fast": "next dev --turbopack",
+    "dev:mobile": "next dev --turbopack -H 0.0.0.0",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "node scripts/seed.js",
+    "db:seed-demo": "node scripts/seed-demo-reportes.mjs",
+    "db:setup-railway": "node scripts/setup-railway-public.mjs",
+    "db:migrate-fks": "node scripts/migrate-public-fks.mjs",
+    "db:fix-sequences": "node scripts/fix-sequences.mjs"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.7",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "jose": "^6.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.454.0",
+    "next": "^16.2.5",
+    "pg": "^8.13.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.13.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^20",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}

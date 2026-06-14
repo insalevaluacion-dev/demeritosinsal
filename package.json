@@ -1,0 +1,12 @@
+{
+  "name": "demeritosinsal",
+  "private": true,
+  "description": "Metapaquete: la app Next.js vive en la carpeta demeritos.",
+  "scripts": {
+    "dev": "npm run dev --prefix demeritos",
+    "build": "npm run build --prefix demeritos",
+    "start": "npm run start --prefix demeritos",
+    "lint": "npm run lint --prefix demeritos",
+    "install:app": "npm install --prefix demeritos"
+  }
+}
