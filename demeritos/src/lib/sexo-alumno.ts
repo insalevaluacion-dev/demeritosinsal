@@ -1,4 +1,4 @@
-/** M = Mujer, H = Hombre (convención del sistema). */
+/** M = Mujer, H = Hombre */
 
 const MASC_TERMINA_A = new Set([
   'JOSE', 'JESUS', 'MOISES', 'MATIAS', 'TOMAS', 'NICOLAS', 'ELIAS', 'LUCAS',
