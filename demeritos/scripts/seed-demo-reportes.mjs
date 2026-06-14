@@ -1,8 +1,7 @@
 /**
- * Inserta ~20 registros de prueba (deméritos, reconocimientos, redenciones)
- * usando alumnos reales de la base de datos.
+ * Inserta 20 registros de dem meri rec de prueba etc
  *
- * Uso: npm run db:seed-demo
+ * Usen -  npm run db:seed-demo
  */
 import pg from 'pg'
 import dotenv from 'dotenv'
