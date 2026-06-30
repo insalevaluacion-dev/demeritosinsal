@@ -3,9 +3,10 @@ setlocal enabledelayedexpansion
 title Sistema Demerito - INSAL
 
 :: ====== CONFIGURACION ======
-:: Carpeta del proyecto = donde esta este .bat (funciona en C:\, E:\, etc.)
 set "PROJECT_DIR=%~dp0"
 set "APP_DIR=%PROJECT_DIR%demeritos"
+set "ENV_FILE=%APP_DIR%\.env.railway"
+set "ENV_EXAMPLE=%APP_DIR%\.env.railway.example"
 set "DEV_COMMAND=npm run dev:railway"
 set "PORT=3000"
 set "URL=http://localhost:%PORT%/login"
@@ -17,6 +18,19 @@ echo  INSAL - Sistema de Demeritos
 echo ========================================
 echo.
 
+if not exist "%APP_DIR%\package.json" (
+    echo [ERROR] No se encuentra la carpeta del proyecto.
+    echo.
+    echo Este archivo debe estar en la carpeta raiz del repo, por ejemplo:
+    echo   E:\demeritosinsal\SIS-Demerito.bat
+    echo   C:\Users\TU_USUARIO\demeritosinsal\SIS-Demerito.bat
+    echo.
+    echo La carpeta "demeritos" debe estar al lado de este .bat
+    echo.
+    pause
+    exit /b 1
+)
+
 where node >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Node.js no esta instalado.
@@ -26,14 +40,44 @@ if errorlevel 1 (
     exit /b 1
 )
 
-if not exist "%APP_DIR%\.env.railway" (
-    echo [ERROR] Falta el archivo: demeritos\.env.railway
+if not exist "%ENV_FILE%" (
+    echo [AVISO] Falta demeritos\.env.railway
     echo.
-    echo Copialo desde tu otra laptop o crealo con:
-    echo   DATABASE_URL=postgresql://usuario:pass@host.railway.app:puerto/railway
-    echo   DB_SCHEMA=demeritos
-    echo   NODE_ENV=development
+    if exist "%ENV_EXAMPLE%" (
+        echo Creando .env.railway desde la plantilla...
+        copy /Y "%ENV_EXAMPLE%" "%ENV_FILE%" >nul
+        echo.
+        echo IMPORTANTE: Debes pegar tu DATABASE_URL de Railway.
+        echo.
+        echo Opcion 1 - Copiar desde la otra laptop:
+        echo   Copia el archivo demeritos\.env.railway a esta carpeta
+        echo.
+        echo Opcion 2 - Sacarlo de Railway:
+        echo   railway.app -^> tu proyecto PostgreSQL -^> Variables -^> DATABASE_URL
+        echo.
+        echo Se abrira el archivo para que lo edites. Guarda y vuelve a ejecutar este .bat
+        echo.
+        notepad "%ENV_FILE%"
+        pause
+        exit /b 1
+    ) else (
+        echo Crea el archivo demeritos\.env.railway con:
+        echo   DATABASE_URL=postgresql://usuario:pass@host.railway.app:puerto/railway
+        echo   DB_SCHEMA=demeritos
+        echo   NODE_ENV=development
+        echo.
+        pause
+        exit /b 1
+    )
+)
+
+findstr /I /C:"CONTRASEÑA" /C:"usuario:pass" /C:"PUERTO" "%ENV_FILE%" >nul 2>&1
+if not errorlevel 1 (
+    echo [ERROR] demeritos\.env.railway aun tiene datos de ejemplo.
     echo.
+    echo Abre el archivo y pega tu DATABASE_URL real de Railway.
+    echo.
+    notepad "%ENV_FILE%"
     pause
     exit /b 1
 )
