@@ -1,6 +1,6 @@
 /**
- * Esquema de la app (tablas/vistas de deméritos, maestros vista, etc.).
- * En Railway suele ser `demeritos` (antes `public`). Local antiguo: `public`.
+ * Esquema dle sistema 
+ * En Railway segun demeritos
  */
 import dotenv from 'dotenv'
 import path from 'path'
@@ -29,7 +29,6 @@ export function regclass(table) {
   return `'${APP_SCHEMA}.${table}'`
 }
 
-/** Opción de conexión pg: tablas sin prefijo resuelven en APP_SCHEMA, luego principal y public. */
 export function pgSearchPathOption() {
   return `-c search_path=${APP_SCHEMA},principal,public`
 }

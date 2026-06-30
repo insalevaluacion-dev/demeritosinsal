@@ -1,10 +1,4 @@
-/**
 
- * Configura APP_SCHEMA en Railway (vistas INSAL + tablas deméritos + catálogos).
-
- * Uso: npm run db:setup-railway  (con DATABASE_URL y DB_SCHEMA=demeritos en .env.local)
-
- */
 
 import fs from 'fs'
 

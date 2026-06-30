@@ -1,4 +1,4 @@
-/** M = Mujer, H = Hombre (convención del sistema). */
+/** M = Mujer, H = Hombre */
 
 const MASC_TERMINA_A = new Set([
   'JOSE', 'JESUS', 'MOISES', 'MATIAS', 'TOMAS', 'NICOLAS', 'ELIAS', 'LUCAS',
@@ -56,7 +56,7 @@ function normalizeNombre(nombre: string): string {
     .trim()
 }
 
-/** Infiere sexo desde nombre completo (formato típico: APELLIDO APELLIDO NOMBRE(S)). */
+
 export function inferirSexoDesdeNombre(nombreCompleto: string): 'M' | 'H' {
   const tokens = normalizeNombre(nombreCompleto).split(/\s+/).filter(Boolean)
   if (tokens.length === 0) return 'H'
@@ -75,7 +75,7 @@ export function inferirSexoDesdeNombre(nombreCompleto: string): 'M' | 'H' {
   return fem >= masc ? 'M' : 'H'
 }
 
-/** Resuelve sexo: primero registro en BD, si no hay, inferencia por nombre. */
+/** Resuelve sexo: primero registro en DB, si no hay, inferencia por nombre. */
 export function resolverSexoAlumno(
   sexoRegistro: string | null | undefined,
   nombreCompleto: string
