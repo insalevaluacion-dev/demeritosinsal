@@ -2,3 +2,5 @@
 *.zip
 .env
 .env.*
+!.env.railway.example
+!**/.env.railway.example
