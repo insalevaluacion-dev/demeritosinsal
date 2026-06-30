@@ -6,33 +6,33 @@ const { Pool } = require('pg')
 const dbUrl = process.env.DATABASE_URL
 const needSsl =
   !!dbUrl &&
-  (dbUrl.includes('render.com') || /sslmode=require/i.test(dbUrl))
+  (dbUrl.includes('render.com') || dbUrl.includes('rlwy.net') || /sslmode=require/i.test(dbUrl))
 const pool = new Pool({
   connectionString: dbUrl,
   ssl: needSsl ? { rejectUnauthorized: false } : undefined,
 })
 
+async function upsert(table, letterCol, rows) {
+  for (const [letra, descripcion] of rows) {
+    await pool.query(
+      `INSERT INTO ${table} (${letterCol}, descripcion, activo) VALUES ($1, $2, true)
+       ON CONFLICT (${letterCol}) DO UPDATE SET descripcion = EXCLUDED.descripcion, activo = true`,
+      [letra, descripcion]
+    )
+  }
+}
+
 async function main() {
+  const {
+    CAUSALES_DEMERITO,
+    OPCIONES_REDENCION,
+    TIPOS_RECONOCIMIENTO,
+  } = await import('./catalog-texts.mjs')
+
   console.log('[seed] Catálogos de deméritos...')
-
-  await pool.query(`INSERT INTO causales_demerito (letra, descripcion) VALUES
-    ('A','No saludar al entrar o al salir del aula.'),
-    ('B','Omitir "Por favor" al hacer una petición.'),
-    ('C','Omitir "Gracias" al recibir un favor, material o atención.'),
-    ('D','Usar un tono grosero o irrespetuoso hacia compañeros, docentes o personal.')
-    ON CONFLICT (letra) DO NOTHING`)
-
-  await pool.query(`INSERT INTO opciones_redencion (letra, descripcion) VALUES
-    ('A','Cumplir una semana completa con saludos y expresiones de cortesía ejemplares.'),
-    ('B','Apoyar voluntariamente en actividades de orden y limpieza escolar.'),
-    ('C','Participar en campañas de valores organizadas por el centro educativo.')
-    ON CONFLICT (letra) DO NOTHING`)
-
-  await pool.query(`INSERT INTO tipos_reconocimiento (letra, descripcion) VALUES
-    ('A','Diplomas'),
-    ('B','Menciones en Murales Escolares')
-    ON CONFLICT (letra) DO NOTHING`)
-
+  await upsert('causales_demerito', 'letra', CAUSALES_DEMERITO)
+  await upsert('opciones_redencion', 'letra', OPCIONES_REDENCION)
+  await upsert('tipos_reconocimiento', 'letra', TIPOS_RECONOCIMIENTO)
   console.log('[seed] Catálogos listos.')
 }
 

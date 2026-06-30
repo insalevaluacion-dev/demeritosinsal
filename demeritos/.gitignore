@@ -17,6 +17,7 @@
 # env
 .env
 .env.local
+.env.railway
 .env.development.local
 .env.test.local
 .env.production.local
@@ -34,3 +35,4 @@ Thumbs.db
 # import temporal / postgres local (ya no se usa)
 .import-tmp/
 .embedded-postgres/
+/data/railway-snapshot.sql

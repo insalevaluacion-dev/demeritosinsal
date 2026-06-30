@@ -25,6 +25,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     setMounted(true)
+    router.prefetch('/dashboard')
+    router.prefetch('/select-role')
     const saved = getRememberedCredentials()
     if (saved.email) setEmail(saved.email)
     if (saved.password) setPassword(saved.password)

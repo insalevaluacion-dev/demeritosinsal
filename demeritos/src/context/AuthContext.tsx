@@ -38,10 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const storedRole = localStorage.getItem(LOCAL_SESSION_KEYS.role)
       if (stored && storedToken) {
         const u = JSON.parse(stored) as User
+        const role = u.rol_sesion?.trim() || storedRole?.trim() || null
         setUser(u)
         setToken(storedToken)
-        if (u.rol_sesion) setSessionRoleState(u.rol_sesion)
-        else if (storedRole) setSessionRoleState(storedRole)
+        if (role) setSessionRoleState(role)
       }
     } catch {
       clearLocalSession()

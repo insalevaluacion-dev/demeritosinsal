@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "node scripts/start-dev.mjs",
+    "dev:local": "node scripts/start-dev.mjs --local",
+    "dev:railway": "node scripts/start-dev.mjs --railway",
     "dev:fast": "next dev --turbopack",
     "dev:mobile": "next dev --turbopack -H 0.0.0.0",
     "build": "next build",
@@ -15,8 +17,13 @@
     "seed": "node scripts/seed.js",
     "db:seed-demo": "node scripts/seed-demo-reportes.mjs",
     "db:setup-railway": "node scripts/setup-railway-public.mjs",
+    "db:export-railway": "node scripts/export-railway-snapshot.mjs",
+    "db:setup-local": "node scripts/setup-local-db.mjs",
+    "db:update-catalogs": "node scripts/update-catalogs.mjs",
     "db:migrate-fks": "node scripts/migrate-public-fks.mjs",
-    "db:fix-sequences": "node scripts/fix-sequences.mjs"
+    "db:fix-sequences": "node scripts/fix-sequences.mjs",
+    "verify:local": "node scripts/verify-local.mjs",
+    "verify:railway": "node scripts/verify-railway.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.7",
@@ -39,6 +46,7 @@
     "@types/pg": "^8.11.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "typescript": "^5"
+    "typescript": "^5",
+    "embedded-postgres": "^18.4.0-beta.17"
   }
 }

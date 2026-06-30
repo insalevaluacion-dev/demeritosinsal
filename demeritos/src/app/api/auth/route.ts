@@ -3,6 +3,7 @@ import { generateToken, hashPassword } from '@/lib/auth'
 import { isClasesEmail, isLoginEmail, normalizeClasesEmail } from '@/lib/auth-email'
 import { query } from '@/lib/db'
 import { ensureContrasenaPlanaColumn, saveContrasenaPlana } from '@/lib/ensure-contrasena-plana'
+import { ensureMaestroIdSequence } from '@/lib/ensure-maestro-schema'
 import { fetchMaestroByEmail } from '@/lib/fetch-maestro'
 import { upgradePasswordHashIfNeeded, verifyMaestroPassword } from '@/lib/maestro-password'
 import type { SessionRoleId } from '@/lib/session-roles'
@@ -116,14 +117,20 @@ export async function POST(req: NextRequest) {
       const rolId = await ensureDocenteRol()
       const turnoId = await ensureTurnoId()
 
+      await ensureMaestroIdSequence()
       await ensureContrasenaPlanaColumn()
-      await query(
+      const inserted = await query<{ maestro_id: number }>(
         `
         INSERT INTO principal.maestros (nombre, email, contrasena, contrasena_plana, rol_id, turno_id, activo)
         VALUES ($1, $2, $3, $4, $5, $6, true)
+        RETURNING maestro_id
         `,
         [nombre, email, hash, password, rolId, turnoId]
       )
+
+      if (!inserted.rows[0]?.maestro_id) {
+        return NextResponse.json({ error: 'No se pudo crear la cuenta' }, { status: 500 })
+      }
 
       const maestro = await fetchMaestroByEmail(email)
       if (!maestro) {

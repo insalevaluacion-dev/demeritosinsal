@@ -4,9 +4,14 @@
   "description": "Metapaquete: la app Next.js vive en la carpeta demeritos.",
   "scripts": {
     "dev": "npm run dev --prefix demeritos",
+    "dev:local": "npm run dev:local --prefix demeritos",
+    "dev:railway": "npm run dev:railway --prefix demeritos",
     "build": "npm run build --prefix demeritos",
     "start": "npm run start --prefix demeritos",
     "lint": "npm run lint --prefix demeritos",
-    "install:app": "npm install --prefix demeritos"
+    "install:app": "npm install --prefix demeritos",
+    "db:export-railway": "npm run db:export-railway --prefix demeritos",
+    "db:setup-local": "npm run db:setup-local --prefix demeritos",
+    "verify:local": "npm run verify:local --prefix demeritos"
   }
 }

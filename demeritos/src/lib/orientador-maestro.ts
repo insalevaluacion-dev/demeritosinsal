@@ -1,6 +1,10 @@
 import type { Pool } from 'pg'
 import { query } from '@/lib/db'
 import { ANIO_ESCOLAR } from '@/lib/anio-escolar'
+import {
+  ensureOrientadorDeclinadoColumn,
+  ensureOrientadorIdSequence,
+} from '@/lib/ensure-maestro-schema'
 
 export type GradoOrientador = {
   grado_id: number
@@ -36,6 +40,48 @@ export async function fetchGradosOrientador(
 export async function maestroTieneOrientador(pool: Pool, maestro_id: number): Promise<boolean> {
   const grados = await fetchGradosOrientador(pool, maestro_id)
   return grados.length > 0
+}
+
+export async function maestroDeclinoOrientador(maestro_id: number): Promise<boolean> {
+  await ensureOrientadorDeclinadoColumn()
+  const res = await query<{ orientador_declinado: boolean }>(
+    `SELECT orientador_declinado FROM principal.maestros WHERE maestro_id = $1`,
+    [maestro_id]
+  )
+  return Boolean(res.rows[0]?.orientador_declinado)
+}
+
+/** Ya eligió grado de orientación o indicó que no es orientador. */
+export async function maestroRespondioOrientador(
+  pool: Pool,
+  maestro_id: number
+): Promise<boolean> {
+  if (await maestroTieneOrientador(pool, maestro_id)) return true
+  return maestroDeclinoOrientador(maestro_id)
+}
+
+/** Marca que el maestro no es orientador (solo docente). */
+export async function declinarOrientador(
+  maestro_id: number
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  await ensureOrientadorDeclinadoColumn()
+
+  const { createRoutePool } = await import('@/lib/db')
+  const pool = createRoutePool()
+  try {
+    const grados = await fetchGradosOrientador(pool, maestro_id)
+    if (grados.length > 0) {
+      return { ok: false, error: 'Ya tienes un grado asignado como orientador' }
+    }
+  } finally {
+    await pool.end()
+  }
+
+  await query(
+    `UPDATE principal.maestros SET orientador_declinado = TRUE WHERE maestro_id = $1`,
+    [maestro_id]
+  )
+  return { ok: true }
 }
 
 /** Asigna el grado de orientación (solo si aún no tiene uno activo este año). */

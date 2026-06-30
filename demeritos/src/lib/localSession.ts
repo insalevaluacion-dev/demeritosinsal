@@ -120,4 +120,26 @@ export function clearLocalSession(): void {
   for (const k of [KEY_USER, KEY_TOKEN, KEY_ROLE, LEGACY_USER, LEGACY_TOKEN, LEGACY_ROLE]) {
     ls.removeItem(k)
   }
+  for (let i = ls.length - 1; i >= 0; i--) {
+    const k = ls.key(i)
+    if (k?.startsWith('demeritos_orientador_')) ls.removeItem(k)
+  }
+}
+
+const ORIENTADOR_CACHE_PREFIX = 'demeritos_orientador_'
+
+export function setOrientadorSessionCache(maestroId: number, value: 'ok' | 'none'): void {
+  if (typeof window === 'undefined') return
+  try {
+    sessionStorage.setItem(`${ORIENTADOR_CACHE_PREFIX}${maestroId}`, value)
+  } catch { /* ignore */ }
+}
+
+export function getOrientadorSessionCache(maestroId: number): 'ok' | 'none' | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const v = sessionStorage.getItem(`${ORIENTADOR_CACHE_PREFIX}${maestroId}`)
+    if (v === 'ok' || v === 'none') return v
+  } catch { /* ignore */ }
+  return null
 }

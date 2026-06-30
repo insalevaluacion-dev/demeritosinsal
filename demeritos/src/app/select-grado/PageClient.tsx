@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useEffect, useState } from 'react'
 import AppIcon from '@/components/AppIcon'
 import { labelGradoOpcion } from '@/lib/utils'
+import { setOrientadorSessionCache } from '@/lib/localSession'
 
 export default function SelectGradoPage() {
   const { user, token, logout, sessionRole, authFetch } = useAuth()
@@ -80,6 +81,7 @@ export default function SelectGradoPage() {
         setError(data.error || 'No se pudo guardar')
         return
       }
+      if (user?.maestro_id) setOrientadorSessionCache(user.maestro_id, 'ok')
       router.push('/dashboard')
     } catch {
       setError('Error de conexión. Intenta de nuevo.')

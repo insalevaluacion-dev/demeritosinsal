@@ -10,6 +10,12 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs'
 
+import {
+  CAUSALES_DEMERITO,
+  OPCIONES_REDENCION,
+  TIPOS_RECONOCIMIENTO,
+} from './catalog-texts.mjs'
+
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(root, '.env.local') })
 
@@ -23,23 +29,27 @@ function pick(arr) {
 }
 
 async function ensureCatalogs() {
-  await client.query(`INSERT INTO causales_demerito (letra, descripcion) VALUES
-    ('A','No saludar al entrar o al salir del aula.'),
-    ('B','Omitir "Por favor" al hacer una petición.'),
-    ('C','Omitir "Gracias" al recibir un favor, material o atención.'),
-    ('D','Usar un tono grosero o irrespetuoso hacia compañeros, docentes o personal.')
-    ON CONFLICT (letra) DO NOTHING`)
-
-  await client.query(`INSERT INTO opciones_redencion (letra, descripcion) VALUES
-    ('A','Cumplir una semana completa con saludos y expresiones de cortesía ejemplares.'),
-    ('B','Apoyar voluntariamente en actividades de orden y limpieza escolar.'),
-    ('C','Participar en campañas de valores organizadas por el centro educativo.')
-    ON CONFLICT (letra) DO NOTHING`)
-
-  await client.query(`INSERT INTO tipos_reconocimiento (letra, descripcion) VALUES
-    ('A','Diplomas'),
-    ('B','Menciones en Murales Escolares')
-    ON CONFLICT (letra) DO NOTHING`)
+  for (const [letra, descripcion] of CAUSALES_DEMERITO) {
+    await client.query(
+      `INSERT INTO causales_demerito (letra, descripcion, activo) VALUES ($1, $2, true)
+       ON CONFLICT (letra) DO UPDATE SET descripcion = EXCLUDED.descripcion, activo = true`,
+      [letra, descripcion]
+    )
+  }
+  for (const [letra, descripcion] of OPCIONES_REDENCION) {
+    await client.query(
+      `INSERT INTO opciones_redencion (letra, descripcion, activo) VALUES ($1, $2, true)
+       ON CONFLICT (letra) DO UPDATE SET descripcion = EXCLUDED.descripcion, activo = true`,
+      [letra, descripcion]
+    )
+  }
+  for (const [letra, descripcion] of TIPOS_RECONOCIMIENTO) {
+    await client.query(
+      `INSERT INTO tipos_reconocimiento (letra, descripcion, activo) VALUES ($1, $2, true)
+       ON CONFLICT (letra) DO UPDATE SET descripcion = EXCLUDED.descripcion, activo = true`,
+      [letra, descripcion]
+    )
+  }
 }
 
 async function ensureMaestro() {

@@ -1,0 +1,4 @@
+# Archivos locales / respaldos — no subir al repo
+*.zip
+.env
+.env.*
