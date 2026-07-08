@@ -319,13 +319,37 @@ export default function ReportesPage() {
               </table>
             </div>
 
+            <h3 style={{ fontSize: 13, fontWeight: 700, margin: '20px 0 10px' }}>
+              Num. Redenciones por opción elegida
+            </h3>
+            <div className="table-wrap" style={{ border: '1px solid var(--border)', borderRadius: 8, maxWidth: 420 }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Opción A</th>
+                    <th>Opción B</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{reporte.resumen.redencionesOpcion.A}</td>
+                    <td>{reporte.resumen.redencionesOpcion.B}</td>
+                    <td style={{ fontWeight: 800 }}>
+                      {reporte.resumen.redencionesOpcion.A + reporte.resumen.redencionesOpcion.B}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             <div style={{ marginTop: 20, padding: 16, background: '#f8fafc', borderRadius: 8, fontSize: 13 }}>
               <strong>Resumen del período</strong>
               <ul style={{ marginTop: 8, paddingLeft: 20, lineHeight: 1.8 }}>
                 <li>Alumnos en el grado: {reporte.resumen.alumnosM} mujeres / {reporte.resumen.alumnosH} hombres — Total {reporte.resumen.alumnosTotal}</li>
                 <li>Deméritos por causal: A={reporte.resumen.demeritosCausal.A}, B={reporte.resumen.demeritosCausal.B}, C={reporte.resumen.demeritosCausal.C}, D={reporte.resumen.demeritosCausal.D}</li>
                 <li>Deméritos por sexo: M={reporte.resumen.demeritosSexo.M}, H={reporte.resumen.demeritosSexo.H}</li>
-                <li>Redenciones: A={reporte.resumen.redencionesOpcion.A}, B={reporte.resumen.redencionesOpcion.B}, C={reporte.resumen.redencionesOpcion.C}</li>
+                <li>Redenciones por opción: A={reporte.resumen.redencionesOpcion.A}, B={reporte.resumen.redencionesOpcion.B}, Total={reporte.resumen.redencionesOpcion.A + reporte.resumen.redencionesOpcion.B}</li>
                 <li>Redenciones por sexo: M={reporte.resumen.redencionesSexo.M}, H={reporte.resumen.redencionesSexo.H}</li>
                 <li>Reconocimientos: M={reporte.resumen.reconocimientosSexo.M}, H={reporte.resumen.reconocimientosSexo.H}</li>
                 <li><strong>Total general: {reporte.resumen.totalGeneral}</strong></li>
