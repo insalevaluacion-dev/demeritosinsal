@@ -76,7 +76,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {isOpen && <div className="sidebar-overlay" onClick={onClose} aria-hidden />}
+      {isOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={onClose}
+          role="presentation"
+          aria-hidden
+        />
+      )}
 
       <aside className={`app-sidebar${isOpen ? ' open' : ''}`}>
         <div className="app-sidebar__layer app-sidebar__layer--back" aria-hidden />

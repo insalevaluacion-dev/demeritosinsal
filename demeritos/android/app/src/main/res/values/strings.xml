@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">INSAL Deméritos</string>
+    <string name="title_activity_main">INSAL Deméritos</string>
+    <string name="package_name">edu.insal.demeritos</string>
+    <string name="custom_url_scheme">edu.insal.demeritos</string>
+</resources>

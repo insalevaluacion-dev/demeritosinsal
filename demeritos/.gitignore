@@ -37,3 +37,12 @@ Thumbs.db
 .import-tmp/
 .embedded-postgres/
 /data/railway-snapshot.sql
+
+# Capacitor / Android
+.env.capacitor
+capacitor.config.json
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+!.env.capacitor.example

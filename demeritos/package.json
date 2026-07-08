@@ -12,7 +12,7 @@
     "dev:fast": "next dev --turbopack",
     "dev:mobile": "next dev --turbopack -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
     "lint": "next lint",
     "seed": "node scripts/seed.js",
     "db:seed-demo": "node scripts/seed-demo-reportes.mjs",
@@ -23,7 +23,12 @@
     "db:migrate-fks": "node scripts/migrate-public-fks.mjs",
     "db:fix-sequences": "node scripts/fix-sequences.mjs",
     "verify:local": "node scripts/verify-local.mjs",
-    "verify:railway": "node scripts/verify-railway.mjs"
+    "verify:railway": "node scripts/verify-railway.mjs",
+    "cap:prepare": "node scripts/capacitor-prepare.mjs",
+    "cap:sync": "node scripts/capacitor-prepare.mjs && npx cap sync android",
+    "cap:android": "npx cap open android",
+    "cap:run:android": "npx cap run android",
+    "deploy:capacitor-url": "node scripts/railway-deploy-setup.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.7",
@@ -37,7 +42,11 @@
     "pg": "^8.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "recharts": "^2.13.3"
+    "recharts": "^2.13.3",
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/splash-screen": "^7.0.2",
+    "@capacitor/status-bar": "^7.0.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -47,6 +56,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "typescript": "^5",
-    "embedded-postgres": "^18.4.0-beta.17"
+    "embedded-postgres": "^18.4.0-beta.17",
+    "@capacitor/cli": "^7.4.2"
   }
 }

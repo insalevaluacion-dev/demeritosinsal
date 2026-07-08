@@ -131,7 +131,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="dashboard-shell">
-        <Navbar onMenuToggle={() => setSidebarOpen(p => !p)} />
+        <Navbar onMenuToggle={() => setSidebarOpen(p => !p)} menuOpen={sidebarOpen} />
         <main className="dashboard-main">{children}</main>
         <footer className="dashboard-footer">
           © 2026 Instituto Nacional San Luis — MINED El Salvador · Sistema de deméritos

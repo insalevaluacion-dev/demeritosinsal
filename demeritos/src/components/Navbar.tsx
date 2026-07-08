@@ -6,6 +6,7 @@ import { Menu, Bell } from 'lucide-react'
 
 interface NavbarProps {
   onMenuToggle: () => void
+  menuOpen?: boolean
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -18,12 +19,16 @@ const ROLE_LABELS: Record<string, string> = {
 const NOTIF_COLORS = ['var(--azul)', 'var(--naranja)', 'var(--rojo)', '#7c3aed']
 const NOTIF_BG = ['var(--azul-lite)', 'var(--naranja-bg)', '#ffeaea', '#f3e8ff']
 
-export default function Navbar({ onMenuToggle }: NavbarProps) {
+export default function Navbar({ onMenuToggle, menuOpen = false }: NavbarProps) {
   const { user, sessionRole, authFetch } = useAuth()
   const [notifs, setNotifs] = useState<any[]>([])
   const [unread, setUnread] = useState(0)
   const [notifOpen, setNotifOpen] = useState(false)
   const notifRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (menuOpen) setNotifOpen(false)
+  }, [menuOpen])
 
   useEffect(() => {
     const isMobile = window.matchMedia('(max-width: 900px)').matches

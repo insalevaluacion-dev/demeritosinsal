@@ -59,6 +59,19 @@ body.sidebar-open {
   touch-action: none;
 }
 
+body.sidebar-open .dashboard-shell {
+  overflow: hidden;
+  pointer-events: none;
+  touch-action: none;
+  user-select: none;
+}
+
+body.sidebar-open .app-sidebar,
+body.sidebar-open .sidebar-overlay {
+  pointer-events: auto;
+  touch-action: auto;
+}
+
 img, svg, video {
   max-width: 100%;
   height: auto;
@@ -778,9 +791,13 @@ tr:last-child td { border-bottom: none; }
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(2px);
-  z-index: 40;
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 45;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   animation: fadeIn var(--duration) var(--ease);
 }
 
@@ -1297,6 +1314,8 @@ tr:last-child td { border-bottom: none; }
     box-shadow: var(--sh-lg);
     overflow: hidden;
     isolation: isolate;
+    z-index: 50;
+    pointer-events: auto;
   }
 
   .app-sidebar__layer {
