@@ -276,6 +276,9 @@ export default function ReportesPage() {
                     <th>C.D</th>
                     <th>Red. M</th>
                     <th>Red. H</th>
+                    <th>Red. A</th>
+                    <th>Red. B</th>
+                    <th>Red. C</th>
                     <th>Rec. M</th>
                     <th>Rec. H</th>
                   </tr>
@@ -295,6 +298,9 @@ export default function ReportesPage() {
                       <td>{f.causalD}</td>
                       <td>{f.redencionM}</td>
                       <td>{f.redencionH}</td>
+                      <td>{f.redencionA}</td>
+                      <td>{f.redencionB}</td>
+                      <td>{f.redencionC}</td>
                       <td>{f.reconocimientoM}</td>
                       <td>{f.reconocimientoH}</td>
                     </tr>
@@ -312,32 +318,11 @@ export default function ReportesPage() {
                     <td>{reporte.totales.causalD}</td>
                     <td>{reporte.totales.redencionM}</td>
                     <td>{reporte.totales.redencionH}</td>
+                    <td>{reporte.totales.redencionA}</td>
+                    <td>{reporte.totales.redencionB}</td>
+                    <td>{reporte.totales.redencionC}</td>
                     <td>{reporte.totales.reconocimientoM}</td>
                     <td>{reporte.totales.reconocimientoH}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <h3 style={{ fontSize: 13, fontWeight: 700, margin: '20px 0 10px' }}>
-              Num. Redenciones por opción elegida
-            </h3>
-            <div className="table-wrap" style={{ border: '1px solid var(--border)', borderRadius: 8, maxWidth: 420 }}>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Opción A</th>
-                    <th>Opción B</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{reporte.resumen.redencionesOpcion.A}</td>
-                    <td>{reporte.resumen.redencionesOpcion.B}</td>
-                    <td style={{ fontWeight: 800 }}>
-                      {reporte.resumen.redencionesOpcion.A + reporte.resumen.redencionesOpcion.B}
-                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -349,7 +334,10 @@ export default function ReportesPage() {
                 <li>Alumnos en el grado: {reporte.resumen.alumnosM} mujeres / {reporte.resumen.alumnosH} hombres — Total {reporte.resumen.alumnosTotal}</li>
                 <li>Deméritos por causal: A={reporte.resumen.demeritosCausal.A}, B={reporte.resumen.demeritosCausal.B}, C={reporte.resumen.demeritosCausal.C}, D={reporte.resumen.demeritosCausal.D}</li>
                 <li>Deméritos por sexo: M={reporte.resumen.demeritosSexo.M}, H={reporte.resumen.demeritosSexo.H}</li>
-                <li>Redenciones por opción: A={reporte.resumen.redencionesOpcion.A}, B={reporte.resumen.redencionesOpcion.B}, Total={reporte.resumen.redencionesOpcion.A + reporte.resumen.redencionesOpcion.B}</li>
+                <li>
+                  Redenciones por opción: A={reporte.resumen.redencionesOpcion.A}, B={reporte.resumen.redencionesOpcion.B}, C={reporte.resumen.redencionesOpcion.C}, Total=
+                  {reporte.resumen.redencionesOpcion.A + reporte.resumen.redencionesOpcion.B + reporte.resumen.redencionesOpcion.C}
+                </li>
                 <li>Redenciones por sexo: M={reporte.resumen.redencionesSexo.M}, H={reporte.resumen.redencionesSexo.H}</li>
                 <li>Reconocimientos: M={reporte.resumen.reconocimientosSexo.M}, H={reporte.resumen.reconocimientosSexo.H}</li>
                 <li><strong>Total general: {reporte.resumen.totalGeneral}</strong></li>

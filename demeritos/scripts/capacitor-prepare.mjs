@@ -32,10 +32,13 @@ const config = {
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 2000,
+      launchShowDuration: 2500,
+      launchAutoHide: true,
       backgroundColor: '#0f5aab',
       showSpinner: true,
       spinnerColor: '#f4b24d',
+      splashFullScreen: true,
+      splashImmersive: true,
     },
     StatusBar: {
       style: 'LIGHT',

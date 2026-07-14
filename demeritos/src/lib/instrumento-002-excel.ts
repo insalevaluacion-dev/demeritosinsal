@@ -1,9 +1,9 @@
 import ExcelJS from 'exceljs'
 import type { FilaMesInstrumento002, Instrumento002Payload } from '@/lib/instrumento-002-types'
 
-/** Columna inicial B = 2, final V = 22 (opción C de redención omitida: solo A, B y Total) */
+/** Columna inicial B = 2, final W = 23 (redenciones por opción A, B, C y Total) */
 const COL_START = 2
-const COL_END = 22
+const COL_END = 23
 const HEADER_FILL = 'FFD9E1F2'
 const BORDER_COLOR = 'FF000000'
 
@@ -46,7 +46,8 @@ function filaConTotales(f: FilaMesInstrumento002): (string | number)[] {
     f.redencionM + f.redencionH,
     f.redencionA,
     f.redencionB,
-    f.redencionA + f.redencionB,
+    f.redencionC,
+    f.redencionA + f.redencionB + f.redencionC,
     f.reconocimientoM,
     f.reconocimientoH,
     f.reconocimientoM + f.reconocimientoH,
@@ -178,18 +179,18 @@ export async function buildInstrumento002Excel(data: Instrumento002Payload): Pro
     styleHeaderCell(c)
   })
 
-  // 16. Redenciones por opción — Q9:S9 (A, B, Total)
-  mergeHeader(headerRowTop, 17, headerRowTop, 19, '16. Num. Redenciones por opción elegida')
-  ;['A', 'B', 'Total'].forEach((t, i) => {
+  // 16. Redenciones por opción — Q9:T9 (A, B, C, Total)
+  mergeHeader(headerRowTop, 17, headerRowTop, 20, '16. Num. Redenciones por opción elegida')
+  ;['A', 'B', 'C', 'Total'].forEach((t, i) => {
     const c = ws.getCell(headerRowSub, 17 + i)
     c.value = t
     styleHeaderCell(c)
   })
 
-  // 17. Reconocimientos por sexo — T9:V9
-  mergeHeader(headerRowTop, 20, headerRowTop, 22, '17. Numero Reconocimientos por sexo')
+  // 17. Reconocimientos por sexo — U9:W9
+  mergeHeader(headerRowTop, 21, headerRowTop, 23, '17. Numero Reconocimientos por sexo')
   ;['M (Mujer)', 'H (Hombre)', 'Total'].forEach((t, i) => {
-    const c = ws.getCell(headerRowSub, 20 + i)
+    const c = ws.getCell(headerRowSub, 21 + i)
     c.value = t
     styleHeaderCell(c)
   })

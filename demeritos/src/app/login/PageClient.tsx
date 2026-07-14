@@ -94,9 +94,11 @@ export default function LoginPage() {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : ''
+      const looksOffline =
+        msg.includes('fetch') || msg.includes('Failed') || msg.includes('NetworkError')
       setError(
-        msg.includes('fetch') || msg.includes('Failed')
-          ? 'No se pudo conectar con el servidor. Abre http://localhost:3000 y verifica que npm run dev esté activo.'
+        looksOffline
+          ? 'No se pudo conectar con el servidor. Verifica internet y que la app en Railway esté activa.'
           : 'Error de conexión. Intenta de nuevo.'
       )
     } finally {

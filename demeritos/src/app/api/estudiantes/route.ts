@@ -3,6 +3,7 @@ import { createRoutePool } from '@/lib/db'
 import { buildEstudianteSearchCondition } from '@/lib/search'
 import { getRequestAuth } from '@/lib/api-auth'
 import { fetchGradosOrientador } from '@/lib/orientador-maestro'
+import { ANIO_ESCOLAR } from '@/lib/anio-escolar'
 
 export async function GET(req: NextRequest) {
   const pool = createRoutePool()
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
     const misGradosOnly = scope === 'mis' && auth?.rol_sesion === 'docente'
 
     const conditions = [
-      '(e.anio_escolar >= 2026 OR e.anio_escolar IS NULL)',
+      `(e.anio_escolar >= ${ANIO_ESCOLAR} OR e.anio_escolar IS NULL)`,
       'COALESCE(e.estado, true) = true',
     ]
     const params: any[] = []

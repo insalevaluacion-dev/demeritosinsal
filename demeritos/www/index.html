@@ -19,21 +19,55 @@
       text-align: center;
     }
     .card {
-      max-width: 320px;
+      max-width: 340px;
       background: rgba(255,255,255,0.12);
       border-radius: 16px;
       padding: 28px 20px;
       backdrop-filter: blur(8px);
     }
-    h1 { font-size: 20px; margin-bottom: 8px; }
-    p { font-size: 14px; opacity: 0.9; line-height: 1.5; }
-    code { font-size: 12px; background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; }
+    img { width: 96px; height: 96px; border-radius: 50%; margin-bottom: 14px; background: #fff; }
+    h1 { font-size: 18px; margin-bottom: 8px; letter-spacing: 0.04em; }
+    p { font-size: 14px; opacity: 0.92; line-height: 1.5; margin-bottom: 12px; }
+    button {
+      margin-top: 8px;
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-weight: 700;
+      background: #f4b24d;
+      color: #0a3d73;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>INSAL Deméritos</h1>
-    <p>Configura <code>CAPACITOR_SERVER_URL</code> en <code>.env.capacitor</code> y ejecuta <code>npm run cap:sync</code>.</p>
+    <img src="insal-logo.png" alt="Instituto Nacional San Luis" width="96" height="96" />
+    <h1>INSTITUTO NACIONAL SAN LUIS</h1>
+    <p id="msg">Conectando al servidor…</p>
+    <button type="button" id="retry">Reintentar</button>
   </div>
+  <script>
+    const DEFAULT_URL = 'https://demeritos-web-production.up.railway.app'
+    const params = new URLSearchParams(location.search)
+    const target = (params.get('server') || DEFAULT_URL).replace(/\/$/, '')
+    const msg = document.getElementById('msg')
+    async function go() {
+      msg.textContent = 'Conectando al servidor…'
+      try {
+        const r = await fetch(target + '/api/health', { cache: 'no-store' })
+        if (r.ok) {
+          location.replace(target + '/login')
+          return
+        }
+        msg.textContent = 'El servidor está iniciando. Espera unos segundos e intenta de nuevo.'
+      } catch {
+        msg.textContent = 'Sin conexión. Revisa internet y reintenta.'
+      }
+    }
+    document.getElementById('retry').onclick = go
+    go()
+    setInterval(go, 15000)
+  </script>
 </body>
 </html>
