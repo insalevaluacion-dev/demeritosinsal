@@ -17,7 +17,7 @@ export async function fetchMaestroByEmail(email: string): Promise<MaestroRow | u
     FROM principal.maestros pm
     LEFT JOIN roles r ON r.rol_id = pm.rol_id
     LEFT JOIN turno t ON t.turno_id = pm.turno_id
-    LEFT JOIN principal.materia mat ON mat.materia_id = pm.materia_id
+    LEFT JOIN materia mat ON mat.materia_id = pm.materia_id
     WHERE LOWER(TRIM(pm.email)) = LOWER(TRIM($1)) AND pm.activo = true
   `,
     [email]

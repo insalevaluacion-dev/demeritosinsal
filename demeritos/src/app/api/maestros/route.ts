@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
       FROM maestros m
       LEFT JOIN roles r ON r.rol_id=m.rol_id
       LEFT JOIN turno t ON t.turno_id=m.turno_id
-      LEFT JOIN principal.materia mat ON mat.materia_id=m.materia_id
+      LEFT JOIN materia mat ON mat.materia_id=m.materia_id
       WHERE m.activo=true ORDER BY m.nombre
     `)
     return NextResponse.json(result.rows.map((m: Record<string, unknown>) => ({

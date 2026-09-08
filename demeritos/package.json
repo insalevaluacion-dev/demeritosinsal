@@ -17,6 +17,7 @@
     "seed": "node scripts/seed.js",
     "db:seed-demo": "node scripts/seed-demo-reportes.mjs",
     "db:setup-railway": "node scripts/setup-railway-public.mjs",
+    "db:setup-principal": "node scripts/setup-demeritos-on-principal.mjs --railway",
     "db:export-railway": "node scripts/export-railway-snapshot.mjs",
     "db:setup-local": "node scripts/setup-local-db.mjs",
     "db:update-catalogs": "node scripts/update-catalogs.mjs",

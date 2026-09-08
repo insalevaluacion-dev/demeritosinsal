@@ -20,7 +20,7 @@ async function dbCheck() {
   const login = await c.query(`
     SELECT pm.email, mat.nombre_materia
     FROM principal.maestros pm
-    LEFT JOIN principal.materia mat ON mat.materia_id = pm.materia_id
+    LEFT JOIN materia mat ON mat.materia_id = pm.materia_id
     WHERE pm.activo = true LIMIT 1
   `)
   checks.push({ name: 'db:login-query', ok: true, detail: login.rows[0]?.email || 'sin maestros' })
