@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyTokenEdge } from '@/lib/auth-edge'
 
-const PUBLIC_PATHS = ['/login', '/api/auth', '/select-role', '/select-grado']
+const PUBLIC_PATHS = ['/login', '/api/auth', '/api/health', '/select-role', '/select-grado']
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl

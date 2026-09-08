@@ -1,26 +1,18 @@
-
 services:
   - type: web
     name: demeritos-insl
     runtime: node
     rootDir: demeritos
     plan: free
-    buildCommand: npm install && npm run build
-
-    preDeployCommand: node scripts/apply-sql.js
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
-    initialDeployHook: node scripts/seed.js
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: DB_SCHEMA
+        value: demeritos
       - key: DATABASE_URL
-        fromDatabase:
-          name: demeritos-db
-          property: connectionString
+        sync: false
       - key: JWT_SECRET
         generateValue: true
-
-databases:
-  - name: demeritos-db
-    databaseName: meps_insl
-    plan: basic-256mb
