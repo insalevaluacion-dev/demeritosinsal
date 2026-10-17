@@ -10,16 +10,35 @@ function needsSsl(connectionString: string): boolean {
   return (
     connectionString.includes('rlwy.net') ||
     connectionString.includes('render.com') ||
+    connectionString.includes('neon.tech') ||
     /sslmode=require/i.test(connectionString)
   )
 }
 
-function normalizeConnectionString(connectionString: string): string {
-  if (!needsSsl(connectionString)) return connectionString
+/** El pooler de Neon no acepta `-c search_path` al arrancar. El endpoint directo sí. */
+function useDirectNeonEndpoint(connectionString: string): string {
+  try {
+    const asPg = connectionString.replace(/^postgres:\/\//, 'postgresql://')
+    const u = new URL(asPg)
+    if (u.hostname.endsWith('.neon.tech') && u.hostname.includes('-pooler')) {
+      u.hostname = u.hostname.replace('-pooler', '')
+      const out = u.toString()
+      return connectionString.startsWith('postgres://') ? out.replace(/^postgresql:\/\//, 'postgres://') : out
+    }
+  } catch {
+    /* se deja la URL original */
+  }
   return connectionString
+}
+
+function normalizeConnectionString(connectionString: string): string {
+  const direct = useDirectNeonEndpoint(connectionString)
+  if (!needsSsl(connectionString)) return direct
+  return direct
     .replace(/([?&])sslmode=[^&]*&?/gi, '$1')
-    .replace(/\?&/, '?')
-    .replace(/\?$/, '')
+    .replace(/([?&])channel_binding=[^&]*&?/gi, '$1')
+    .replace(/\?&/g, '?')
+    .replace(/[?&]$/, '')
 }
 
 export function getPgConfig(): PoolConfig {

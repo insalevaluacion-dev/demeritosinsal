@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
+import { isLoginEmail } from '@/lib/auth-email'
 import {
   getRememberedCredentials,
   hasRememberedCredentials,
@@ -34,6 +35,10 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!isLoginEmail(email)) {
+      setError('Use un correo institucional válido (por ejemplo @clases.edu.sv).')
+      return
+    }
     setLoading(true)
     try {
       const res = await fetch('/api/auth', {
@@ -107,7 +112,8 @@ export default function LoginPage() {
               Iniciar sesión
             </h2>
             <p style={{ color: 'rgba(232,241,255,.86)', fontSize: 14 }}>
-              Usa el mismo correo y contraseña del sistema principal
+              Usa tu correo del sistema principal. La primera vez creas tu contraseña; la próxima
+              vez entra con esa misma.
             </p>
           </div>
 
@@ -132,7 +138,7 @@ export default function LoginPage() {
                 className="auth-input"
                 type="password"
                 name="password"
-                placeholder="La misma del sistema principal"
+                placeholder="La primera vez, la que tú elijas"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required

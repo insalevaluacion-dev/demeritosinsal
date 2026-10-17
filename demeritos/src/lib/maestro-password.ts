@@ -1,9 +1,17 @@
 import { comparePassword, hashPassword } from '@/lib/auth'
 import { query } from '@/lib/db'
+import { ensureContrasenaPlanaColumn } from '@/lib/ensure-contrasena-plana'
 
 /** Hash bcrypt válido. */
 function isBcryptHash(stored: string): boolean {
   return stored.startsWith('$2a$') || stored.startsWith('$2b$') || stored.startsWith('$2y$')
+}
+
+/** En el principal aún no hay contraseña personal (texto vacío). */
+export function maestroSinContrasenaPersonal(
+  contrasenaPlana: string | null | undefined
+): boolean {
+  return !String(contrasenaPlana ?? '').trim()
 }
 
 /**
@@ -26,6 +34,23 @@ export async function verifyMaestroPassword(
   if (hash && !isBcryptHash(hash) && hash === password) return true
 
   return false
+}
+
+/** Guarda hash y texto en principal.maestros (queda creada en el sistema principal). */
+export async function saveMaestroPassword(maestroId: number, password: string): Promise<void> {
+  await ensureContrasenaPlanaColumn()
+  const newHash = await hashPassword(password)
+  const plain = String(password).slice(0, 255)
+  await query(
+    `UPDATE principal.maestros SET contrasena = $1, contrasena_plana = $2 WHERE maestro_id = $3`,
+    [newHash, plain, maestroId]
+  ).catch(() =>
+    query(`UPDATE maestros SET contrasena = $1, contrasena_plana = $2 WHERE maestro_id = $3`, [
+      newHash,
+      plain,
+      maestroId,
+    ])
+  )
 }
 
 /** Si entró con texto plano, guarda hash bcrypt para el siguiente inicio de sesión. */

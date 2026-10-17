@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateToken } from '@/lib/auth'
-import { normalizeClasesEmail } from '@/lib/auth-email'
+import { isLoginEmail, normalizeClasesEmail } from '@/lib/auth-email'
 import { saveContrasenaPlana } from '@/lib/ensure-contrasena-plana'
 import { fetchMaestroByEmail } from '@/lib/fetch-maestro'
-import { upgradePasswordHashIfNeeded, verifyMaestroPassword } from '@/lib/maestro-password'
+import {
+  maestroSinContrasenaPersonal,
+  saveMaestroPassword,
+  upgradePasswordHashIfNeeded,
+  verifyMaestroPassword,
+} from '@/lib/maestro-password'
 import type { SessionRoleId } from '@/lib/session-roles'
 
 export const runtime = 'nodejs'
@@ -33,9 +38,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Correo y contraseña son obligatorios' }, { status: 400 })
     }
 
+    if (!isLoginEmail(email)) {
+      return NextResponse.json(
+        { error: 'Use un correo institucional válido (por ejemplo @clases.edu.sv).' },
+        { status: 400 }
+      )
+    }
+
     if (body.register) {
       return NextResponse.json(
-        { error: 'No se pueden crear cuentas aquí. Use el correo y la contraseña del sistema principal.' },
+        { error: 'No se pueden crear cuentas aquí. Use el correo del sistema principal.' },
         { status: 400 }
       )
     }
@@ -49,24 +61,28 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const valid = await verifyMaestroPassword(
-      password,
-      existing.contrasena as string,
-      existing.contrasena_plana as string
-    )
+    const maestroId = Number(existing.maestro_id)
+    const primeraVez = maestroSinContrasenaPersonal(existing.contrasena_plana as string)
+    const valid = primeraVez
+      ? true
+      : await verifyMaestroPassword(
+          password,
+          existing.contrasena as string,
+          existing.contrasena_plana as string
+        )
     if (!valid) {
       return NextResponse.json(
-        { error: 'Contraseña incorrecta. Use la misma del sistema principal.' },
+        { error: 'Contraseña incorrecta. Use la que registró la primera vez que ingresó.' },
         { status: 401 }
       )
     }
 
-    await saveContrasenaPlana(Number(existing.maestro_id), password)
-    await upgradePasswordHashIfNeeded(
-      Number(existing.maestro_id),
-      password,
-      existing.contrasena as string
-    )
+    if (primeraVez) {
+      await saveMaestroPassword(maestroId, password)
+    } else {
+      await saveContrasenaPlana(maestroId, password)
+      await upgradePasswordHashIfNeeded(maestroId, password, existing.contrasena as string)
+    }
 
     const user = userPayload(existing)
     const token = generateToken({
