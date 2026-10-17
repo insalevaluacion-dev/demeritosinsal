@@ -1340,6 +1340,14 @@ tr:last-child td { border-bottom: none; }
   color: #fff;
 }
 
+.anio-filtro__nota {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--soft);
+  line-height: 1.4;
+}
+
 .alerta-limite {
   display: flex;
   gap: 10px;
@@ -1378,7 +1386,7 @@ tr:last-child td { border-bottom: none; }
   background: var(--azul-lite);
   color: var(--azul-dark);
   font-size: 13px;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .dash-chart-title {
@@ -1429,7 +1437,7 @@ tr:last-child td { border-bottom: none; }
   justify-content: space-between;
   gap: 8px;
   font-size: 12px;
-  font-weight: 650;
+  font-weight: 600;
   color: var(--txt);
 }
 

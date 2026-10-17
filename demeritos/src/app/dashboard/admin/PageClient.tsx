@@ -63,8 +63,8 @@ export default function AdminPage() {
       <div style={{ background: 'linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%)', borderRadius: 16, padding: '20px 24px', marginBottom: 24, color: '#fff', display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>
         <img src="/insal-logo.png" alt="INSAL" width={64} height={64} style={{ borderRadius: '50%', border: '2px solid var(--naranja)' }} />
         <div style={{ flex: 1 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800 }}>Instituto Nacional San Luis</h2>
-          <p style={{ opacity: 0.8, fontSize: 13, marginTop: 3 }}>Sistema de méritos, deméritos y redenciones — INSAL</p>
+          <h2 style={{ fontSize: 18, fontWeight: 800 }}>Resumen del plantel</h2>
+          <p style={{ opacity: 0.8, fontSize: 13, marginTop: 3 }}>Cifras del ciclo en curso</p>
           <p style={{ opacity: 0.65, fontSize: 12, marginTop: 2 }}>Ministerio de Educación de El Salvador | Bachillerato 1°–3° año</p>
         </div>
         <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>

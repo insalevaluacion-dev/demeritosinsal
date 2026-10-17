@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { ESPECIALIDADES, labelGradoOpcion } from '@/lib/utils'
 import Link from 'next/link'
 import AppIcon from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 
 export default function NuevoReconocimientoPage({ preNie = '' }: { preNie?: string }) {
   const { authFetch } = useAuth()
@@ -88,10 +89,11 @@ export default function NuevoReconocimientoPage({ preNie = '' }: { preNie?: stri
 
   return (
     <div style={{ maxWidth: 600, margin: '0 auto' }}>
-      <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}><AppIcon name="reconocimiento" size={20} /> Registrar Reconocimiento</h1>
-        <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 4 }}>Artículo 7 — Instrumento No. 001 — MINED</p>
-      </div>
+      <PageHero
+        title="Registrar reconocimiento"
+        subtitle="Artículo 7 — Instrumento No. 001 — MINED"
+        hint="Un reconocimiento queda en el expediente del estudiante y puede usarse para redimir deméritos."
+      />
 
       <div className="card" style={{ padding: 20, marginBottom: 16 }}>
         <h3 style={{ fontWeight: 700, marginBottom: 14, fontSize: 14 }}>1. Seleccionar Estudiante</h3>

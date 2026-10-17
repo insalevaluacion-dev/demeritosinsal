@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ESPECIALIDADES, labelGradoOpcion } from '@/lib/utils'
 import Link from 'next/link'
 import AppIcon, { type AppIconName } from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 import { expedientePath, normalizeNie } from '@/lib/nie'
 
 export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) {
@@ -146,10 +147,11 @@ export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) 
 
   return (
     <div style={{ maxWidth: 640, margin: '0 auto' }}>
-      <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}><AppIcon name="demerito" size={20} /> Registrar Demérito</h1>
-        <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 4 }}>Instrumento No. 001 — MINED El Salvador</p>
-      </div>
+      <PageHero
+        title="Registrar demérito"
+        subtitle="Instrumento No. 001 — MINED El Salvador"
+        hint="Elige al estudiante, la causal y guarda. Con 6 activos se avisa a la familia, con 10 hay suspensión y con 15 el alumno no puede ser promovido."
+      />
 
       {/* Student search */}
       <div className="card" style={{ padding: 20, marginBottom: 16 }}>

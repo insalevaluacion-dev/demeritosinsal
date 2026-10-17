@@ -55,6 +55,7 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
+    setLoading(true)
     authFetch(`/api/dashboard${nivel ? `?nivel=${nivel}` : ''}`)
       .then(async (r) => {
         const d = await r.json()
@@ -114,9 +115,10 @@ export default function DashboardPage() {
           <AppIcon name="bell" size={18} />
           <span>
             {topInc.filter((t: { total: number }) => Number(t.total) >= 10).length} estudiantes con 10 o más deméritos activos.
-            {' '}
-            {topInc.filter((t: { total: number }) => Number(t.total) >= 15).length} ya llegaron a 15 y no pueden ser promovidos.
-            El aviso también está en la campana.
+            {topInc.some((t: { total: number }) => Number(t.total) >= 15)
+              ? ` ${topInc.filter((t: { total: number }) => Number(t.total) >= 15).length} ya llegaron a 15 y no pueden ser promovidos.`
+              : ''}
+            {' '}El aviso también está en la campana.
           </span>
         </Link>
       )}
@@ -155,6 +157,9 @@ export default function DashboardPage() {
             {op.label}
           </button>
         ))}
+        <p className="anio-filtro__nota">
+          Los cinco números de arriba son de todo el instituto. Las gráficas y el top siguen el año elegido.
+        </p>
       </div>
 
       {!loading && <DashboardCharts porMes={porMes} porEsp={porEsp} nivel={nivel} />}
@@ -189,14 +194,17 @@ export default function DashboardPage() {
             ) : (
               <>
                 {recientes.map((r: any, i: number) => (
-                  <div
+                  <Link
                     key={i}
+                    href={r.nie ? `/dashboard/estudiantes/${r.nie}` : '/dashboard'}
                     style={{
                       padding: '12px 20px',
                       borderBottom: '1px solid var(--border)',
                       display: 'flex',
                       gap: 12,
                       alignItems: 'flex-start',
+                      textDecoration: 'none',
+                      color: 'inherit',
                     }}
                   >
                     <AppIcon name={r.tipo === 'demerito' ? 'demerito' : 'reconocimiento'} size={18} />
@@ -218,7 +226,7 @@ export default function DashboardPage() {
                         Por: {r.maestro} · {new Date(r.fecha).toLocaleDateString('es-SV')}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
                 {recientes.length === 0 && (
                   <p style={{ padding: 20, color: 'var(--soft)', textAlign: 'center', fontSize: 13 }}>

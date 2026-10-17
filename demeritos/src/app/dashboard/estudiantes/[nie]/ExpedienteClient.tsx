@@ -6,6 +6,7 @@ import { ESPECIALIDADES, formatDate, formatDateTime } from '@/lib/utils'
 import { expedientePath, normalizeNie, nuevoDemeritoPath, nuevoReconocimientoPath } from '@/lib/nie'
 import Link from 'next/link'
 import AppIcon from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 
 type Tab = 'demeritos' | 'reconocimientos' | 'redenciones'
 
@@ -158,14 +159,15 @@ export default function ExpedienteClient({ nie }: { nie: string }) {
 
   return (
     <div>
-      <div className="expediente-header">
-        <Link href="/dashboard/estudiantes" style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, padding: '6px 12px', fontSize: 13, color: 'var(--soft)', textDecoration: 'none' }}>
-          ← Volver
+      <PageHero
+        title="Expediente"
+        subtitle={estudiante.nombre_completo}
+        hint="Deméritos, reconocimientos y redenciones de este estudiante. 6 activos: avisar a la familia. 10: suspensión. 15: no puede ser promovido."
+      >
+        <Link href="/dashboard/estudiantes" className="btn-outline">
+          Volver a estudiantes
         </Link>
-        <h1 style={{ fontSize: 18, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AppIcon name="user" size={18} /> Expediente del Estudiante
-        </h1>
-      </div>
+      </PageHero>
 
       <div className="card" style={{ padding: 24, marginBottom: 20 }}>
         <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap' }}>
