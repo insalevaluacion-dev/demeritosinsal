@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { ESPECIALIDADES, labelGradoOpcion } from '@/lib/utils'
 import Link from 'next/link'
 import AppIcon, { type AppIconName } from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 
 export default function NotificacionesPage() {
   const { authFetch } = useAuth()
@@ -43,19 +44,17 @@ export default function NotificacionesPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <AppIcon name="notificaciones" size={20} /> Notificaciones
-          </h1>
-          <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 2 }}>{unread} sin leer de {notifs.length} notificaciones</p>
-        </div>
+      <PageHero
+        title="Notificaciones"
+        subtitle={`${unread} sin leer de ${notifs.length}`}
+        hint="Avisos al registrar un demérito, un reconocimiento o una redención. A los 6 se pide hablar con la familia, a los 10 hay suspensión de privilegios y a los 15 el estudiante no puede ser promovido."
+      >
         {unread > 0 && (
           <button onClick={markAllRead} className="btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <AppIcon name="check" size={16} /> Marcar todas como leídas
           </button>
         )}
-      </div>
+      </PageHero>
 
       {loading ? (
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--soft)' }}>Cargando...</div>

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import Link from 'next/link'
 import AppIcon, { type AppIconName } from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 import { ROLES_DISPLAY } from '@/lib/utils'
 
 export default function AdminPage() {
@@ -52,12 +53,11 @@ export default function AdminPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AppIcon name="admin" size={20} /> Panel de Administración
-        </h1>
-        <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 2 }}>{ROLES_DISPLAY[sessionRole||'']} — {user?.nombre}</p>
-      </div>
+      <PageHero
+        title="Administración"
+        subtitle={`${ROLES_DISPLAY[sessionRole || '']} — ${user?.nombre || ''}`}
+        hint="Atajos de dirección: estudiantes, docentes, historial, reconocimientos, reportes y avisos. Desde aquí se revisa el plantel completo."
+      />
 
       {/* Institutional banner */}
       <div style={{ background: 'linear-gradient(135deg,var(--azul-dark) 0%,var(--azul) 100%)', borderRadius: 16, padding: '20px 24px', marginBottom: 24, color: '#fff', display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap' }}>

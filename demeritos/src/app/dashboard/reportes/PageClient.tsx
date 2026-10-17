@@ -7,6 +7,7 @@ import { ANIO_ESCOLAR } from '@/lib/anio-escolar'
 import { MESES_NOMBRE } from '@/lib/report-queries'
 import type { Instrumento002Header, Instrumento002Payload } from '@/lib/instrumento-002-types'
 import AppIcon from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 
 const INSTITUCIONAL = new Set(['director', 'coordinador', 'subdirector'])
 const MESES_OPTS = MESES_NOMBRE.map((label, i) => ({ value: i + 1, label }))
@@ -133,15 +134,11 @@ export default function ReportesPage() {
 
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-      <header style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AppIcon name="reportes" size={22} />
-          Instrumento No. 002 — Reportes oficiales
-        </h1>
-        <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 4 }}>
-          Registro consolidado de deméritos, redenciones y reconocimientos — datos desde la base de datos INSAL
-        </p>
-      </header>
+      <PageHero
+        title="Instrumento No. 002"
+        subtitle="Reportes oficiales"
+        hint="Arma el consolidado de deméritos, redenciones y reconocimientos del grado o de todo el instituto, y descárgalo en Excel."
+      />
 
       {/* Paso 1: Alcance y grado */}
       <div className="card" style={{ padding: 20, marginBottom: 16 }}>

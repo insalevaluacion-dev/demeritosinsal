@@ -16,6 +16,12 @@ const PASOS = [
       'Estudiantes es la matrícula activa del año. Deméritos de hoy son los registrados en esta fecha. Activos son los que todavía no se redimen. Reconocimientos y redenciones cuentan lo bueno y lo que ya se reparó.',
   },
   {
+    id: 'anios',
+    titulo: 'El año',
+    texto:
+      'Estos botones filtran las gráficas y el top. Todos los años muestra el bachillerato completo. 1.°, 2.° o 3.° deja solo ese nivel.',
+  },
+  {
     id: 'meses',
     titulo: 'Deméritos por mes',
     texto:
@@ -25,7 +31,7 @@ const PASOS = [
     id: 'especialidades',
     titulo: 'Porcentajes por especialidad',
     texto:
-      'La dona reparte el 100% de los deméritos activos entre General, Software, Salud y el resto. La barra de abajo es otra cuenta: de los estudiantes de esa especialidad, qué porcentaje ya tiene al menos un demérito activo.',
+      'La dona reparte el 100% de los deméritos activos entre las especialidades. La barra es el porcentaje de estudiantes de esa especialidad con al menos un demérito. Al tocarla se abre la lista de esos estudiantes.',
   },
   {
     id: 'actividad',

@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { ESPECIALIDADES, labelGradoOpcion, labelNivel } from '@/lib/utils'
 import Link from 'next/link'
 import AppIcon from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 import { expedientePath, nuevoDemeritoPath } from '@/lib/nie'
 
 export default function EstudiantesPage() {
@@ -20,6 +21,7 @@ export default function EstudiantesPage() {
   const [espFiltro, setEspFiltro] = useState('')
   const [appliedGrado, setAppliedGrado] = useState('')
   const [appliedEsp, setAppliedEsp] = useState('')
+  const [appliedNivel, setAppliedNivel] = useState('')
   const [page, setPage] = useState(1)
   const [error, setError] = useState('')
   const [gradoOrientadorLabel, setGradoOrientadorLabel] = useState('')
@@ -38,6 +40,7 @@ export default function EstudiantesPage() {
     if (appliedQ.trim()) params.set('q', appliedQ.trim())
     if (appliedGrado) params.set('grado_id', appliedGrado)
     if (appliedEsp) params.set('especialidad', appliedEsp)
+    if (appliedNivel) params.set('nivel', appliedNivel)
     try {
       const res = await authFetch(`/api/estudiantes?${params}`)
       const data = await res.json()
@@ -63,11 +66,22 @@ export default function EstudiantesPage() {
     } finally {
       setLoading(false)
     }
-  }, [appliedQ, appliedGrado, appliedEsp, authFetch, esDocente])
+  }, [appliedQ, appliedGrado, appliedEsp, appliedNivel, authFetch, esDocente])
 
   useEffect(() => {
     fetchEstudiantes(page)
-  }, [page, appliedQ, appliedGrado, appliedEsp, fetchEstudiantes])
+  }, [page, appliedQ, appliedGrado, appliedEsp, appliedNivel, fetchEstudiantes])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const esp = params.get('especialidad') || ''
+    const niv = params.get('nivel') || ''
+    if (esp) {
+      setEspFiltro(esp)
+      setAppliedEsp(esp)
+    }
+    if (['1', '2', '3'].includes(niv)) setAppliedNivel(niv)
+  }, [])
   useEffect(() => {
     const url = esDocente ? '/api/reportes/mis-grados' : '/api/grados'
     authFetch(url)
@@ -114,22 +128,37 @@ export default function EstudiantesPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <AppIcon name="estudiantes" size={20} /> {esDocente ? 'Mis Estudiantes' : 'Estudiantes'}
-          </h1>
-          <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 2 }}>
-            {total} estudiante{total === 1 ? '' : 's'}
-            {esDocente && gradoOrientadorLabel ? ` — ${gradoOrientadorLabel}` : ' — 1°, 2° y 3° año'}
-          </p>
-        </div>
+      <PageHero
+        title={esDocente ? 'Mis estudiantes' : 'Estudiantes'}
+        subtitle={`${total} estudiante${total === 1 ? '' : 's'}${esDocente && gradoOrientadorLabel ? ` — ${gradoOrientadorLabel}` : ' — 1.°, 2.° y 3.° año'}`}
+        hint="Aquí está la matrícula. Busca por nombre o NIE, filtra por especialidad y abre el expediente. Desde el inicio, una especialidad llega ya filtrada."
+      >
         {puedeExportarInstitucional && (
-          <button type="button" onClick={exportExcel} className="btn-primary" style={{ background: 'var(--verde)' }}>
+          <button type="button" onClick={exportExcel} className="btn-primary">
             Exportar Excel
           </button>
         )}
-      </div>
+      </PageHero>
+      {(appliedEsp || appliedNivel) && (
+        <div className="filtro-aviso">
+          <span>
+            Viendo {appliedEsp ? ESPECIALIDADES[appliedEsp] || appliedEsp : 'todas las especialidades'}
+            {appliedNivel ? `, ${appliedNivel}.° año` : ''}
+          </span>
+          <button
+            type="button"
+            className="btn-outline"
+            onClick={() => {
+              setEspFiltro('')
+              setAppliedEsp('')
+              setAppliedNivel('')
+              window.history.replaceState(null, '', '/dashboard/estudiantes')
+            }}
+          >
+            Quitar filtro
+          </button>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="card" style={{ padding: 16, marginBottom: 20 }}>

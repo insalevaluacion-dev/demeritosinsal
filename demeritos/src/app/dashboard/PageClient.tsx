@@ -42,6 +42,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [guiaAbierta, setGuiaAbierta] = useState(false)
+  const [nivel, setNivel] = useState('')
 
   useEffect(() => {
     if (window.localStorage.getItem('insal-guia-vista') === '1') return
@@ -54,7 +55,7 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
-    authFetch('/api/dashboard')
+    authFetch(`/api/dashboard${nivel ? `?nivel=${nivel}` : ''}`)
       .then(async (r) => {
         const d = await r.json()
         if (!r.ok) throw new Error(d.error || 'No se pudieron cargar las estadísticas')
@@ -66,7 +67,7 @@ export default function DashboardPage() {
         setError(e instanceof Error ? e.message : 'Error al cargar el dashboard')
       })
       .finally(() => setLoading(false))
-  }, [authFetch])
+  }, [authFetch, nivel])
 
   if (error) {
     return (
@@ -108,6 +109,18 @@ export default function DashboardPage() {
         </button>
       </header>
 
+      {!loading && topInc.some((t: { total: number }) => Number(t.total) >= 10) && (
+        <Link href="/dashboard/notificaciones" className="alerta-limite">
+          <AppIcon name="bell" size={18} />
+          <span>
+            {topInc.filter((t: { total: number }) => Number(t.total) >= 10).length} estudiantes con 10 o más deméritos activos.
+            {' '}
+            {topInc.filter((t: { total: number }) => Number(t.total) >= 15).length} ya llegaron a 15 y no pueden ser promovidos.
+            El aviso también está en la campana.
+          </span>
+        </Link>
+      )}
+
       <div className="grid-stats" data-guia="numeros">
         {loading
           ? Array.from({ length: 5 }).map((_, i) => <StatSkeleton key={i} />)
@@ -126,7 +139,25 @@ export default function DashboardPage() {
             ))}
       </div>
 
-      {!loading && <DashboardCharts porMes={porMes} porEsp={porEsp} />}
+      <div className="anio-filtro" data-guia="anios">
+        {[
+          { id: '', label: 'Todos los años' },
+          { id: '1', label: '1.° año' },
+          { id: '2', label: '2.° año' },
+          { id: '3', label: '3.° año' },
+        ].map((op) => (
+          <button
+            key={op.id || 'todos'}
+            type="button"
+            className={nivel === op.id ? 'is-on' : ''}
+            onClick={() => setNivel(op.id)}
+          >
+            {op.label}
+          </button>
+        ))}
+      </div>
+
+      {!loading && <DashboardCharts porMes={porMes} porEsp={porEsp} nivel={nivel} />}
 
       <div className="grid-2">
         <div className="card dash-panel" style={{ padding: 0, overflow: 'hidden' }} data-guia="actividad">
@@ -239,6 +270,13 @@ export default function DashboardPage() {
                         <div style={{ fontSize: 11, color: 'var(--soft)', marginTop: 2 }}>
                           {ESPECIALIDADES[t.especialidad] || t.especialidad} — {labelNivel(t) || t.nivel_nombre}{' '}
                           {t.seccion_letra}
+                          {Number(t.total) >= 15
+                            ? ' · No promueve'
+                            : Number(t.total) >= 10
+                              ? ' · Suspensión'
+                              : Number(t.total) >= 6
+                                ? ' · Avisar a la familia'
+                                : ''}
                         </div>
                       </div>
                       <div

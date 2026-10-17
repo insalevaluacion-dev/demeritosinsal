@@ -4,6 +4,12 @@ import { ANIO_ESCOLAR } from '@/lib/anio-escolar'
 
 export async function GET(req: NextRequest) {
   try {
+    const nivelRaw = req.nextUrl.searchParams.get('nivel')
+    const nivel = nivelRaw && ['1', '2', '3'].includes(nivelRaw) ? Number(nivelRaw) : null
+    const topParams = nivel ? [nivel] : []
+    const espParams = nivel ? [ANIO_ESCOLAR, nivel] : [ANIO_ESCOLAR]
+    const mesParams = nivel ? [nivel] : []
+
     const [estTotal, demHoy, demActivos, reconTotal, redTotal, recientes, topInc, porEsp, porMes] = await Promise.all([
       query(`SELECT COUNT(*) FROM estudiantes WHERE anio_escolar=$1 AND estado=true`, [ANIO_ESCOLAR]),
       query(`SELECT COUNT(*) FROM demeritos WHERE fecha=CURRENT_DATE`),
@@ -34,9 +40,10 @@ export async function GET(req: NextRequest) {
         LEFT JOIN estudiantes e ON e.nie=d.nie
         LEFT JOIN grados g ON g.grado_id=e.grado_id
         WHERE d.redimido=false
+        ${nivel ? 'AND g.nivel::int = $1' : ''}
         GROUP BY d.nie, e.nombre_completo, g.nivel, g.especialidad, g.seccion_letra
         ORDER BY total DESC LIMIT 10
-      `),
+      `, topParams),
       query(`
         SELECT g.especialidad,
           COUNT(DISTINCT e.estudiante_id)::int AS estudiantes,
@@ -46,17 +53,22 @@ export async function GET(req: NextRequest) {
         LEFT JOIN estudiantes e ON e.grado_id=g.grado_id AND e.anio_escolar=$1 AND e.estado=true
         LEFT JOIN demeritos d ON d.nie=e.nie AND d.redimido=false
         WHERE g.activo=true
+        ${nivel ? 'AND g.nivel::int = $2' : ''}
         GROUP BY g.especialidad
         ORDER BY demeritos DESC, estudiantes DESC
-      `, [ANIO_ESCOLAR]),
+      `, espParams),
       query(`
-        SELECT TO_CHAR(fecha,'MM') as mes, TO_CHAR(fecha,'Mon') as mes_nombre,
+        SELECT TO_CHAR(d.fecha,'MM') as mes, TO_CHAR(d.fecha,'Mon') as mes_nombre,
           COUNT(*)::int as total,
-          COUNT(*) FILTER (WHERE sexo_alumno = 'M')::int as mujeres,
-          COUNT(*) FILTER (WHERE sexo_alumno = 'H')::int as hombres
-        FROM demeritos WHERE fecha >= DATE_TRUNC('year', CURRENT_DATE)
+          COUNT(*) FILTER (WHERE d.sexo_alumno = 'M')::int as mujeres,
+          COUNT(*) FILTER (WHERE d.sexo_alumno = 'H')::int as hombres
+        FROM demeritos d
+        LEFT JOIN estudiantes e ON e.nie = d.nie
+        LEFT JOIN grados g ON g.grado_id = e.grado_id
+        WHERE d.fecha >= DATE_TRUNC('year', CURRENT_DATE)
+        ${nivel ? 'AND g.nivel::int = $1' : ''}
         GROUP BY mes, mes_nombre ORDER BY mes
-      `)
+      `, mesParams)
     ])
 
     const especialidadRows = porEsp.rows.map((row) => ({

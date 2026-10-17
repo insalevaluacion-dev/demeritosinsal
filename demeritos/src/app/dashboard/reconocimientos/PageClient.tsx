@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { ESPECIALIDADES, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import Link from 'next/link'
-import AppIcon from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 
 export default function ReconocimientosPage() {
   const { authFetch } = useAuth()
@@ -25,15 +25,13 @@ export default function ReconocimientosPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-heading"><AppIcon name="reconocimiento" size={20} /> Reconocimientos</h1>
-          <p className="page-heading-sub">{reconocimientos.length} registros</p>
-        </div>
-        <div className="page-header-actions">
-          <Link href="/dashboard/reconocimientos/nuevo" className="btn-success" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}><AppIcon name="reconocimientoNuevo" size={16} /> Nuevo Reconocimiento</Link>
-        </div>
-      </div>
+      <PageHero
+        title="Reconocimientos"
+        subtitle={`${reconocimientos.length} registros`}
+        hint="Lo que se reconoce al estudiante: el tipo, quién lo anotó y la fecha. Sirve para equilibrar el historial, no solo ver faltas."
+      >
+        <Link href="/dashboard/reconocimientos/nuevo" className="btn-success" style={{ textDecoration: 'none' }}>Nuevo reconocimiento</Link>
+      </PageHero>
 
       <div className="card" style={{ overflow: 'hidden' }}>
         {loading ? (

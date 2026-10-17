@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { ROLES_DISPLAY } from '@/lib/utils'
-import AppIcon from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 
 export default function MaestrosPage() {
   const { authFetch, sessionRole } = useAuth()
@@ -33,12 +33,11 @@ export default function MaestrosPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AppIcon name="maestros" size={20} /> Personal Docente
-        </h1>
-        <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 2 }}>{maestroList.length} docentes registrados</p>
-      </div>
+      <PageHero
+        title="Personal docente"
+        subtitle={`${maestroList.length} docentes registrados`}
+        hint="Quienes inician sesión en el sistema. Desde aquí se busca por nombre o correo. La contraseña solo la ve dirección."
+      />
 
       <div className="card" style={{ padding: 16, marginBottom: 20, display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
         <input placeholder="Buscar por nombre o correo..." value={q} onChange={e => setQ(e.target.value)} style={{ maxWidth: 340 }} />

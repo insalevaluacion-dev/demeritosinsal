@@ -13,6 +13,7 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts'
+import Link from 'next/link'
 import AppIcon from '@/components/AppIcon'
 import { ESPECIALIDADES } from '@/lib/utils'
 
@@ -31,6 +32,7 @@ type EspRow = {
 type Props = {
   porMes: any[]
   porEsp: any[]
+  nivel?: string
 }
 
 function especialidadRows(porEsp: any[]): EspRow[] {
@@ -50,7 +52,7 @@ function especialidadRows(porEsp: any[]): EspRow[] {
     .filter((row) => row.estudiantes > 0 || row.demeritos > 0)
 }
 
-export default function DashboardCharts({ porMes, porEsp }: Props) {
+export default function DashboardCharts({ porMes, porEsp, nivel = '' }: Props) {
   const especialidades = especialidadRows(porEsp)
   const conDemeritos = especialidades.filter((row) => row.demeritos > 0)
 
@@ -172,6 +174,10 @@ export default function DashboardCharts({ porMes, porEsp }: Props) {
             <ul className="esp-bars">
               {especialidades.map((row, i) => (
                 <li key={row.especialidad || row.nombre}>
+                  <Link
+                    className="esp-bars__link"
+                    href={`/dashboard/estudiantes?especialidad=${encodeURIComponent(row.especialidad)}${nivel ? `&nivel=${nivel}` : ''}`}
+                  >
                   <div className="esp-bars__head">
                     <span>
                       <i style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
@@ -185,6 +191,7 @@ export default function DashboardCharts({ porMes, porEsp }: Props) {
                   <p>
                     {row.con_demerito} de {row.estudiantes} estudiantes · {row.porcentaje}% del total de deméritos
                   </p>
+                  </Link>
                 </li>
               ))}
             </ul>

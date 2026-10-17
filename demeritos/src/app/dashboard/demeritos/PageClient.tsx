@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { ESPECIALIDADES, formatDate } from '@/lib/utils'
 import Link from 'next/link'
 import AppIcon from '@/components/AppIcon'
+import PageHero from '@/components/PageHero'
 
 export default function DemeritosPage() {
   const { authFetch, downloadExcel } = useAuth()
@@ -45,16 +46,14 @@ export default function DemeritosPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--txt)', display: 'flex', alignItems: 'center', gap: 8 }}><AppIcon name="demerito" size={20} /> Historial de Deméritos</h1>
-          <p style={{ color: 'var(--soft)', fontSize: 13, marginTop: 2 }}>{total} registros totales</p>
-        </div>
-        <div className="page-header-actions">
-          <button onClick={exportExcel} className="btn-primary" style={{ background: 'var(--verde)', display: 'inline-flex', alignItems: 'center', gap: 6 }}><AppIcon name="fileSpreadsheet" size={16} /> Exportar Excel</button>
-          <Link href="/dashboard/demeritos/nuevo" className="btn-danger" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}><AppIcon name="demeritoNuevo" size={16} /> Nuevo Demérito</Link>
-        </div>
-      </div>
+      <PageHero
+        title="Historial de deméritos"
+        subtitle={`${total} registros`}
+        hint="Todo lo anotado: quién, por qué causal y si ya se redimió. Desde aquí también se registra uno nuevo o se exporta."
+      >
+        <button onClick={exportExcel} className="btn-success" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><AppIcon name="fileSpreadsheet" size={16} /> Exportar Excel</button>
+        <Link href="/dashboard/demeritos/nuevo" className="btn-danger" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}><AppIcon name="demeritoNuevo" size={16} /> Nuevo demérito</Link>
+      </PageHero>
 
       {error && (
         <div style={{ background: '#ffeaea', color: 'var(--rojo)', padding: 12, borderRadius: 8, marginBottom: 16, fontSize: 13 }}>
