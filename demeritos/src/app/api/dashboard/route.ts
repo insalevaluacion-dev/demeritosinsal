@@ -39,12 +39,15 @@ export async function GET(req: NextRequest) {
       `),
       query(`
         SELECT g.especialidad,
-          COUNT(DISTINCT e.estudiante_id) as estudiantes,
-          COUNT(d.id_demerito) as demeritos
+          COUNT(DISTINCT e.estudiante_id)::int AS estudiantes,
+          COUNT(DISTINCT e.estudiante_id) FILTER (WHERE d.id_demerito IS NOT NULL)::int AS con_demerito,
+          COUNT(d.id_demerito)::int AS demeritos
         FROM grados g
-        LEFT JOIN estudiantes e ON e.grado_id=g.grado_id AND e.anio_escolar=$1
+        LEFT JOIN estudiantes e ON e.grado_id=g.grado_id AND e.anio_escolar=$1 AND e.estado=true
         LEFT JOIN demeritos d ON d.nie=e.nie AND d.redimido=false
-        GROUP BY g.especialidad ORDER BY demeritos DESC
+        WHERE g.activo=true
+        GROUP BY g.especialidad
+        ORDER BY demeritos DESC, estudiantes DESC
       `, [ANIO_ESCOLAR]),
       query(`
         SELECT TO_CHAR(fecha,'MM') as mes, TO_CHAR(fecha,'Mon') as mes_nombre,
@@ -56,6 +59,19 @@ export async function GET(req: NextRequest) {
       `)
     ])
 
+    const especialidadRows = porEsp.rows.map((row) => ({
+      especialidad: row.especialidad,
+      estudiantes: Number(row.estudiantes) || 0,
+      con_demerito: Number(row.con_demerito) || 0,
+      demeritos: Number(row.demeritos) || 0,
+    }))
+    const totalDemeritosEsp = especialidadRows.reduce((sum, row) => sum + row.demeritos, 0)
+    const porEspecialidad = especialidadRows.map((row) => ({
+      ...row,
+      porcentaje: totalDemeritosEsp ? Math.round((row.demeritos / totalDemeritosEsp) * 1000) / 10 : 0,
+      tasa: row.estudiantes ? Math.round((row.con_demerito / row.estudiantes) * 1000) / 10 : 0,
+    }))
+
     return NextResponse.json({
       stats: {
         totalEstudiantes: parseInt(estTotal.rows[0].count),
@@ -66,7 +82,7 @@ export async function GET(req: NextRequest) {
       },
       recientes: recientes.rows,
       topIncidencias: topInc.rows,
-      porEspecialidad: porEsp.rows,
+      porEspecialidad,
       porMes: porMes.rows
     })
   } catch (e) {

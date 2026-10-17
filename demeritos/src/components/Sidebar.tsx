@@ -108,7 +108,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </span>
         </div>
 
-        <nav className="app-sidebar-nav">
+        <nav className="app-sidebar-nav" data-guia="menu">
           {items.map(item => (
             <Link
               key={item.href}

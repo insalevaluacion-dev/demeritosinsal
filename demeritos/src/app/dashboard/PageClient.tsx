@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext'
 import { ESPECIALIDADES, labelNivel } from '@/lib/utils'
 import Link from 'next/link'
 import AppIcon, { type AppIconName } from '@/components/AppIcon'
+import GuiaSistema from './GuiaSistema'
 
 const DashboardCharts = dynamic(() => import('./DashboardCharts'), {
   ssr: false,
@@ -15,6 +16,13 @@ const DashboardCharts = dynamic(() => import('./DashboardCharts'), {
     </div>
   ),
 })
+
+function saludo() {
+  const hora = new Date().getHours()
+  if (hora < 12) return 'Buenos días'
+  if (hora < 19) return 'Buenas tardes'
+  return 'Buenas noches'
+}
 
 function StatSkeleton() {
   return (
@@ -33,6 +41,17 @@ export default function DashboardPage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [guiaAbierta, setGuiaAbierta] = useState(false)
+
+  useEffect(() => {
+    if (window.localStorage.getItem('insal-guia-vista') === '1') return
+    setGuiaAbierta(true)
+  }, [])
+
+  const cerrarGuia = () => {
+    window.localStorage.setItem('insal-guia-vista', '1')
+    setGuiaAbierta(false)
+  }
 
   useEffect(() => {
     authFetch('/api/dashboard')
@@ -76,14 +95,20 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h2 className="page-title">Buenos días, {user?.nombre?.split(' ')[0]}</h2>
-        <p className="page-subtitle">
-          {new Date().toLocaleDateString('es-SV', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} — Bachillerato (1° a 3° año)
-        </p>
-      </div>
+      <header className="dash-hero" data-guia="inicio">
+        <div>
+          <p className="dash-kicker">Instituto Nacional San Luis</p>
+          <h2 className="page-title">{saludo()}, {user?.nombre?.split(' ')[0]}</h2>
+          <p className="page-subtitle">
+            {new Date().toLocaleDateString('es-SV', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} — Bachillerato, de 1.° a 3.° año
+          </p>
+        </div>
+        <button type="button" className="btn-outline dash-guia-btn" onClick={() => setGuiaAbierta(true)}>
+          Cómo funciona
+        </button>
+      </header>
 
-      <div className="grid-stats">
+      <div className="grid-stats" data-guia="numeros">
         {loading
           ? Array.from({ length: 5 }).map((_, i) => <StatSkeleton key={i} />)
           : statCards.map((s) => (
@@ -104,7 +129,7 @@ export default function DashboardPage() {
       {!loading && <DashboardCharts porMes={porMes} porEsp={porEsp} />}
 
       <div className="grid-2">
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="card dash-panel" style={{ padding: 0, overflow: 'hidden' }} data-guia="actividad">
           <div
             style={{
               padding: '16px 20px',
@@ -174,7 +199,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="card dash-panel" style={{ padding: 0, overflow: 'hidden' }} data-guia="incidencias">
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
             <h3
               style={{
@@ -242,6 +267,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <GuiaSistema open={guiaAbierta} onClose={cerrarGuia} />
     </div>
   )
 }

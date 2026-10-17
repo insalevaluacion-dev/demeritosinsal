@@ -14,30 +14,51 @@ import {
   CartesianGrid,
 } from 'recharts'
 import AppIcon from '@/components/AppIcon'
+import { ESPECIALIDADES } from '@/lib/utils'
 
 const PIE_COLORS = ['#0f5aab', '#fa8d08', '#d62b0f', '#1a7a45', '#c9942a', '#1a6bc7', '#7c3aed']
+
+type EspRow = {
+  especialidad: string
+  nombre: string
+  estudiantes: number
+  con_demerito: number
+  demeritos: number
+  porcentaje: number
+  tasa: number
+}
 
 type Props = {
   porMes: any[]
   porEsp: any[]
 }
 
+function especialidadRows(porEsp: any[]): EspRow[] {
+  return porEsp
+    .map((row) => {
+      const codigo = String(row.especialidad || '')
+      return {
+        especialidad: codigo,
+        nombre: ESPECIALIDADES[codigo] || codigo || 'Sin especialidad',
+        estudiantes: Number(row.estudiantes) || 0,
+        con_demerito: Number(row.con_demerito) || 0,
+        demeritos: Number(row.demeritos) || 0,
+        porcentaje: Number(row.porcentaje) || 0,
+        tasa: Number(row.tasa) || 0,
+      }
+    })
+    .filter((row) => row.estudiantes > 0 || row.demeritos > 0)
+}
+
 export default function DashboardCharts({ porMes, porEsp }: Props) {
+  const especialidades = especialidadRows(porEsp)
+  const conDemeritos = especialidades.filter((row) => row.demeritos > 0)
+
   return (
     <div className="grid-charts">
-      <div className="card" style={{ padding: 20 }}>
-        <h3
-          style={{
-            fontWeight: 700,
-            marginBottom: 16,
-            fontSize: 15,
-            color: 'var(--txt)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <AppIcon name="chart" size={18} /> Deméritos por Mes
+      <div className="card dash-chart-card" style={{ padding: 20 }} data-guia="meses">
+        <h3 className="dash-chart-title">
+          <AppIcon name="chart" size={18} /> Deméritos por mes
         </h3>
         {porMes.length > 0 ? (
           <>
@@ -98,48 +119,78 @@ export default function DashboardCharts({ porMes, porEsp }: Props) {
         )}
       </div>
 
-      <div className="card" style={{ padding: 20 }}>
-        <h3
-          style={{
-            fontWeight: 700,
-            marginBottom: 16,
-            fontSize: 15,
-            color: 'var(--txt)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <AppIcon name="graduationCap" size={18} /> Por Especialidad
+      <div className="card dash-chart-card" style={{ padding: 20 }} data-guia="especialidades">
+        <h3 className="dash-chart-title">
+          <AppIcon name="graduationCap" size={18} /> Porcentajes por especialidad
         </h3>
-        {porEsp.length > 0 ? (
-          <div className="chart-box" style={{ height: 220 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={porEsp}
-                  dataKey="demeritos"
-                  nameKey="especialidad"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={68}
-                  innerRadius={0}
-                >
-                  {porEsp.map((_: any, i: number) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend
-                  layout="horizontal"
-                  verticalAlign="bottom"
-                  wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+        <p className="dash-chart-note">
+          La dona es el porcentaje del total de deméritos activos. La barra es el porcentaje de estudiantes de esa especialidad que ya tienen al menos uno.
+        </p>
+        {especialidades.length > 0 ? (
+          <>
+            {conDemeritos.length > 0 ? (
+              <div className="chart-box" style={{ height: 210 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={conDemeritos}
+                      dataKey="porcentaje"
+                      nameKey="nombre"
+                      cx="50%"
+                      cy="46%"
+                      outerRadius={72}
+                      innerRadius={42}
+                      paddingAngle={2}
+                      label={({ payload }) => {
+                        const pct = Number((payload as EspRow | undefined)?.porcentaje) || 0
+                        return pct >= 8 ? `${pct}%` : ''
+                      }}
+                    >
+                      {conDemeritos.map((row, i) => (
+                        <Cell key={row.especialidad || i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (!active || !payload?.length) return null
+                        const row = payload[0].payload as EspRow
+                        return (
+                          <div className="dash-tip">
+                            <div style={{ fontWeight: 700, marginBottom: 6 }}>{row.nombre}</div>
+                            <div>{row.porcentaje}% de los deméritos activos ({row.demeritos})</div>
+                            <div>{row.tasa}% de sus estudiantes ({row.con_demerito} de {row.estudiantes})</div>
+                          </div>
+                        )
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="dash-chart-empty">Todavía no hay deméritos activos para repartir el porcentaje.</p>
+            )}
+            <ul className="esp-bars">
+              {especialidades.map((row, i) => (
+                <li key={row.especialidad || row.nombre}>
+                  <div className="esp-bars__head">
+                    <span>
+                      <i style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                      {row.nombre}
+                    </span>
+                    <strong>{row.tasa}%</strong>
+                  </div>
+                  <div className="esp-bars__track">
+                    <div style={{ width: `${Math.min(row.tasa, 100)}%`, background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                  </div>
+                  <p>
+                    {row.con_demerito} de {row.estudiantes} estudiantes · {row.porcentaje}% del total de deméritos
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </>
         ) : (
-          <p style={{ color: 'var(--soft)', textAlign: 'center', padding: 40 }}>Sin datos</p>
+          <p className="dash-chart-empty">Sin especialidades con estudiantes este año.</p>
         )}
       </div>
     </div>
