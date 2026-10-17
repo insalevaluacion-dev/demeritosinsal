@@ -24,6 +24,9 @@ function userPayload(maestro: Record<string, unknown>) {
     turno: maestro.turno_nombre,
     materia: maestro.materia_nombre,
     rol_sesion: rolSesion || null,
+    avatar_sexo: String(maestro.avatar_sexo || '').trim() === 'M' || String(maestro.avatar_sexo || '').trim() === 'H'
+      ? (String(maestro.avatar_sexo).trim() as 'M' | 'H')
+      : null,
     needsRoleSelection: !rolSesion,
   }
 }

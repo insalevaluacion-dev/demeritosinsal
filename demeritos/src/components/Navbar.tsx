@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { Menu, Bell } from 'lucide-react'
+import PerfilAvatar, { type AvatarSexo } from '@/components/PerfilAvatar'
+import { inferirSexoDesdeNombre } from '@/lib/sexo-alumno'
 
 interface NavbarProps {
   onMenuToggle: () => void
@@ -20,14 +22,20 @@ const NOTIF_COLORS = ['var(--azul)', 'var(--naranja)', 'var(--rojo)', '#7c3aed']
 const NOTIF_BG = ['var(--azul-lite)', 'var(--naranja-bg)', '#ffeaea', '#f3e8ff']
 
 export default function Navbar({ onMenuToggle, menuOpen = false }: NavbarProps) {
-  const { user, sessionRole, authFetch } = useAuth()
+  const { user, sessionRole, authFetch, updateUser } = useAuth()
   const [notifs, setNotifs] = useState<any[]>([])
   const [unread, setUnread] = useState(0)
   const [notifOpen, setNotifOpen] = useState(false)
+  const [perfilOpen, setPerfilOpen] = useState(false)
+  const [guardando, setGuardando] = useState(false)
   const notifRef = useRef<HTMLDivElement>(null)
+  const perfilRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (menuOpen) setNotifOpen(false)
+    if (menuOpen) {
+      setNotifOpen(false)
+      setPerfilOpen(false)
+    }
   }, [menuOpen])
 
   useEffect(() => {
@@ -58,6 +66,16 @@ export default function Navbar({ onMenuToggle, menuOpen = false }: NavbarProps) 
     return () => document.removeEventListener('mousedown', onDocClick)
   }, [notifOpen])
 
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (perfilRef.current && !perfilRef.current.contains(e.target as Node)) {
+        setPerfilOpen(false)
+      }
+    }
+    if (perfilOpen) document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
+  }, [perfilOpen])
+
   const loadNotifs = async () => {
     try {
       const res = await authFetch('/api/notificaciones')
@@ -78,7 +96,25 @@ export default function Navbar({ onMenuToggle, menuOpen = false }: NavbarProps) 
     setUnread(prev => Math.max(0, prev - 1))
   }
 
-  const initials = user?.nombre?.charAt(0)?.toUpperCase() || 'U'
+  const sexoGuardado = user?.avatar_sexo === 'M' || user?.avatar_sexo === 'H' ? user.avatar_sexo : null
+  const sexo: AvatarSexo = sexoGuardado || inferirSexoDesdeNombre(user?.nombre || '')
+
+  const elegirSexo = async (siguiente: AvatarSexo) => {
+    if (!user || guardando) return
+    setGuardando(true)
+    try {
+      const res = await authFetch('/api/perfil', {
+        method: 'PATCH',
+        body: JSON.stringify({ sexo: siguiente }),
+      })
+      if (res.ok) {
+        updateUser({ ...user, avatar_sexo: siguiente })
+        setPerfilOpen(false)
+      }
+    } finally {
+      setGuardando(false)
+    }
+  }
 
   return (
     <header className="app-navbar glass-nav">
@@ -150,12 +186,42 @@ export default function Navbar({ onMenuToggle, menuOpen = false }: NavbarProps) 
         )}
       </div>
 
-      <div className="navbar-user-chip">
-        <span className="avatar-chip">{initials}</span>
-        <div className="navbar-user-text">
-          <p style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>{user?.nombre?.split(' ')[0]}</p>
-          <p style={{ fontSize: 11, color: 'var(--soft)' }}>{ROLE_LABELS[sessionRole || '']}</p>
-        </div>
+      <div ref={perfilRef} className="navbar-perfil-wrap">
+        <button
+          type="button"
+          className="navbar-user-chip"
+          onClick={() => {
+            setNotifOpen(false)
+            setPerfilOpen((o) => !o)
+          }}
+          aria-label="Foto de perfil"
+        >
+          <PerfilAvatar rol={sessionRole} sexo={sexo} size={32} />
+          <div className="navbar-user-text">
+            <p style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>{user?.nombre?.split(' ')[0]}</p>
+            <p style={{ fontSize: 11, color: 'var(--soft)' }}>{ROLE_LABELS[sessionRole || '']}</p>
+          </div>
+        </button>
+        {perfilOpen && (
+          <div className="perfil-menu">
+            <p className="perfil-menu__titulo">Foto de perfil</p>
+            <p className="perfil-menu__nota">El icono sigue tu rol. Elige mujer u hombre.</p>
+            <div className="perfil-menu__opciones">
+              {(['M', 'H'] as const).map((op) => (
+                <button
+                  key={op}
+                  type="button"
+                  className={sexo === op ? 'is-on' : ''}
+                  disabled={guardando}
+                  onClick={() => elegirSexo(op)}
+                >
+                  <PerfilAvatar rol={sessionRole} sexo={op} size={40} />
+                  <span>{op === 'M' ? 'Mujer' : 'Hombre'}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </header>
   )

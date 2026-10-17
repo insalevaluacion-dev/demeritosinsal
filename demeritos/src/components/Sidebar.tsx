@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { LogOut, ArrowLeftRight } from 'lucide-react'
 import AppIcon, { type AppIconName } from '@/components/AppIcon'
+import PerfilAvatar from '@/components/PerfilAvatar'
+import { inferirSexoDesdeNombre } from '@/lib/sexo-alumno'
 
 interface SidebarProps { isOpen: boolean; onClose: () => void }
 
@@ -101,11 +103,20 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         <div className="app-sidebar-user">
           <p className="sidebar-user-label">Sesión activa</p>
-          <p className="sidebar-user-name">{user?.nombre?.split(' ').slice(0, 3).join(' ')}</p>
-          <span className="sidebar-role-badge">
-            <span className="sidebar-role-dot" />
-            {ROLE_LABEL[sessionRole ?? 'docente']}
-          </span>
+          <div className="sidebar-user-row">
+            <PerfilAvatar
+              rol={sessionRole}
+              sexo={user?.avatar_sexo === 'M' || user?.avatar_sexo === 'H' ? user.avatar_sexo : inferirSexoDesdeNombre(user?.nombre || '')}
+              size={36}
+            />
+            <div>
+              <p className="sidebar-user-name">{user?.nombre?.split(' ').slice(0, 3).join(' ')}</p>
+              <span className="sidebar-role-badge">
+                <span className="sidebar-role-dot" />
+                {ROLE_LABEL[sessionRole ?? 'docente']}
+              </span>
+            </div>
+          </div>
         </div>
 
         <nav className="app-sidebar-nav">

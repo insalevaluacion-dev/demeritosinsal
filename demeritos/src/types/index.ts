@@ -8,6 +8,8 @@ export interface User {
   materia?: string
   /** Rol elegido una sola vez en select-role (persistido en BD). */
   rol_sesion?: string | null
+  /** M = mujer, H = hombre. Define el color del avatar. */
+  avatar_sexo?: 'M' | 'H' | null
   needsRoleSelection?: boolean
 }
 

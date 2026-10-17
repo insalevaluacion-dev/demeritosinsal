@@ -5,51 +5,43 @@ import { useEffect, useState } from 'react'
 const PASOS = [
   {
     id: 'inicio',
-    titulo: 'El inicio',
-    texto:
-      'Esta pantalla resume el bachillerato de hoy. Arriba está el saludo y la fecha. El botón «Cómo funciona» vuelve a abrir esta guía cuando quieras.',
+    titulo: 'Inicio',
+    texto: 'Resume el día: saludo y fecha. «Cómo funciona» vuelve a abrir esta guía.',
   },
   {
     id: 'numeros',
-    titulo: 'Los cinco números',
-    texto:
-      'Estudiantes es la matrícula activa del año. Deméritos de hoy son los registrados en esta fecha. Activos son los que todavía no se redimen. Reconocimientos y redenciones cuentan lo bueno y lo que ya se reparó.',
+    titulo: 'Los números',
+    texto: 'Matrícula, deméritos de hoy, los que siguen activos, reconocimientos y redenciones.',
   },
   {
     id: 'anios',
     titulo: 'El año',
-    texto:
-      'Estos botones filtran las gráficas y el top. Todos los años muestra el bachillerato completo. 1.°, 2.° o 3.° deja solo ese nivel.',
+    texto: 'Filtra las gráficas y el top por 1.°, 2.° o 3.° año.',
   },
   {
     id: 'meses',
-    titulo: 'Deméritos por mes',
-    texto:
-      'Cada barra es un mes del año. El rosa son mujeres y el azul, hombres. Sirve para ver en qué meses se concentran las faltas, no para castigar un nombre.',
+    titulo: 'Por mes',
+    texto: 'Cuántos deméritos hubo cada mes. Rosa: mujeres. Azul: hombres.',
   },
   {
     id: 'especialidades',
-    titulo: 'Porcentajes por especialidad',
-    texto:
-      'La dona reparte el 100% de los deméritos activos entre las especialidades. La barra es el porcentaje de estudiantes de esa especialidad con al menos un demérito. Al tocarla se abre la lista de esos estudiantes.',
+    titulo: 'Por especialidad',
+    texto: 'Qué parte de los deméritos activos tiene cada especialidad. La barra abre esa lista.',
   },
   {
     id: 'actividad',
-    titulo: 'Actividad reciente',
-    texto:
-      'Los últimos deméritos y reconocimientos, con el estudiante, el motivo y quién lo registró. Es el pulso del día, de lo más nuevo a lo más viejo.',
+    titulo: 'Actividad',
+    texto: 'Lo último registrado. Al tocarlo se abre el expediente.',
   },
   {
     id: 'incidencias',
-    titulo: 'Top de incidencias',
-    texto:
-      'Los estudiantes con más deméritos todavía sin redimir. El número rojo o naranja avisa cuando ya van varios. Al tocarlo se abre el expediente.',
+    titulo: 'Top',
+    texto: 'Quién tiene más deméritos sin redimir. 6 avisa a la familia, 10 suspende, 15 no promueve.',
   },
   {
     id: 'menu',
-    titulo: 'El menú de la izquierda',
-    texto:
-      'Dashboard vuelve a este resumen. Estudiantes abre la lista y el expediente. Nuevo demérito y Nuevo reconocimiento sirven para anotar el día. Historial y Reconocimientos muestran lo ya guardado. Reportes arma el Instrumento 002. Notificaciones son los avisos. Dirección también ve Maestros y Administración. Abajo están Cambiar rol y Cerrar sesión.',
+    titulo: 'El menú',
+    texto: 'Entra a estudiantes, registros, historial, reportes y avisos.',
   },
 ]
 
@@ -79,7 +71,7 @@ export default function GuiaSistema({ open, onClose }: { open: boolean; onClose:
     <>
     <div className="guia-velo" aria-hidden />
     <aside className="guia-panel" role="dialog" aria-labelledby="guia-titulo">
-      <p className="guia-kicker">Guía · bloque {paso + 1} de {PASOS.length}</p>
+      <p className="guia-kicker">Para qué sirve · {paso + 1}/{PASOS.length}</p>
       <h3 id="guia-titulo">{actual.titulo}</h3>
       <p>{actual.texto}</p>
       <div className="guia-dots" aria-hidden>

@@ -27,11 +27,11 @@ function saludo() {
 function StatSkeleton() {
   return (
     <div className="stat-card stat-card--skeleton" aria-hidden>
-      <div className="stat-card__icon skeleton-block" style={{ width: 48, height: 48, borderRadius: 12 }} />
-      <div className="stat-card__body">
-        <div className="skeleton-block" style={{ width: 56, height: 22, marginBottom: 6 }} />
-        <div className="skeleton-block" style={{ width: 88, height: 12 }} />
+      <div className="stat-card__top">
+        <div className="stat-card__icon skeleton-block" style={{ width: 48, height: 48, borderRadius: 12 }} />
+        <div className="skeleton-block" style={{ width: 56, height: 22 }} />
       </div>
+      <div className="skeleton-block" style={{ width: '80%', height: 12 }} />
     </div>
   )
 }
@@ -128,15 +128,15 @@ export default function DashboardPage() {
           ? Array.from({ length: 5 }).map((_, i) => <StatSkeleton key={i} />)
           : statCards.map((s) => (
               <div key={s.label} className="stat-card">
-                <div className="stat-card__icon" style={{ background: s.bg }}>
-                  <AppIcon name={s.icon} size={22} />
-                </div>
-                <div className="stat-card__body">
+                <div className="stat-card__top">
+                  <div className="stat-card__icon" style={{ background: s.bg }}>
+                    <AppIcon name={s.icon} size={22} />
+                  </div>
                   <div className="stat-card__value" style={{ color: s.color }}>
                     {s.value.toLocaleString()}
                   </div>
-                  <div className="stat-card__label">{s.label}</div>
                 </div>
+                <div className="stat-card__label">{s.label}</div>
               </div>
             ))}
       </div>

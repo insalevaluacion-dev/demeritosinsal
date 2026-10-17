@@ -1,5 +1,6 @@
 import { query } from '@/lib/db'
 import { ensureContrasenaPlanaColumn } from '@/lib/ensure-contrasena-plana'
+import { ensureAvatarSexoColumn } from '@/lib/maestro-avatar'
 import { ensureRolSesionColumn, fetchRolSesion } from '@/lib/maestro-rol-sesion'
 
 export type MaestroRow = Record<string, unknown>
@@ -8,11 +9,12 @@ export type MaestroRow = Record<string, unknown>
 export async function fetchMaestroByEmail(email: string): Promise<MaestroRow | undefined> {
   await ensureRolSesionColumn()
   await ensureContrasenaPlanaColumn()
+  await ensureAvatarSexoColumn()
 
   const result = await query(
     `
     SELECT pm.maestro_id, pm.nombre, pm.email, pm.contrasena, pm.contrasena_plana,
-      pm.rol_id, pm.activo, pm.rol_sesion,
+      pm.rol_id, pm.activo, pm.rol_sesion, pm.avatar_sexo,
       r.nombre AS rol_nombre, t.nombre AS turno_nombre, mat.nombre_materia AS materia_nombre
     FROM principal.maestros pm
     LEFT JOIN roles r ON r.rol_id = pm.rol_id
