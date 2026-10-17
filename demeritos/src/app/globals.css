@@ -1378,12 +1378,26 @@ tr:last-child td { border-bottom: none; }
   color: var(--soft);
 }
 
-.guia-foco {
-  outline: 2px solid #fa8d08;
-  outline-offset: 4px;
-  border-radius: 16px;
+.guia-velo {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 16, 32, 0.62);
+  z-index: 55;
+}
+
+.guia-foco:not(.app-sidebar) {
   position: relative;
-  z-index: 30;
+  z-index: 70;
+  outline: none;
+}
+
+.app-sidebar.guia-foco {
+  z-index: 72;
+  outline: none;
+}
+
+body.guia-menu .app-sidebar {
+  z-index: 72;
 }
 
 .guia-panel {
@@ -1542,7 +1556,8 @@ tr:last-child td { border-bottom: none; }
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  .app-sidebar.open { transform: translateX(0); }
+  .app-sidebar.open,
+  body.guia-menu .app-sidebar { transform: translateX(0); }
   .sidebar-overlay { display: block; }
 
   .dashboard-main { padding: 16px; }

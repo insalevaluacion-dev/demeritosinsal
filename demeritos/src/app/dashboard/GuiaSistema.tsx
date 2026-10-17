@@ -43,7 +43,7 @@ const PASOS = [
     id: 'menu',
     titulo: 'El menú de la izquierda',
     texto:
-      'Estudiantes: la lista y el expediente. Nuevo demérito y nuevo reconocimiento: el registro del día. Historial: lo ya anotado. Reportes: el Instrumento 002 para entregar. Notificaciones: avisos al estudiante. Dirección también ve maestros y administración.',
+      'Dashboard vuelve a este resumen. Estudiantes abre la lista y el expediente. Nuevo demérito y Nuevo reconocimiento sirven para anotar el día. Historial y Reconocimientos muestran lo ya guardado. Reportes arma el Instrumento 002. Notificaciones son los avisos. Dirección también ve Maestros y Administración. Abajo están Cambiar rol y Cerrar sesión.',
   },
 ]
 
@@ -52,14 +52,17 @@ export default function GuiaSistema({ open, onClose }: { open: boolean; onClose:
   const actual = PASOS[paso]
 
   useEffect(() => {
+    document.body.classList.toggle('guia-abierta', open)
+    document.body.classList.toggle('guia-menu', open && actual.id === 'menu')
     document.querySelectorAll('.guia-foco').forEach((el) => el.classList.remove('guia-foco'))
     if (!open) return
     const target = document.querySelector(`[data-guia="${actual.id}"]`)
     if (target) {
       target.classList.add('guia-foco')
-      target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      target.scrollIntoView({ behavior: 'smooth', block: actual.id === 'menu' ? 'nearest' : 'center' })
     }
     return () => {
+      document.body.classList.remove('guia-abierta', 'guia-menu')
       document.querySelectorAll('.guia-foco').forEach((el) => el.classList.remove('guia-foco'))
     }
   }, [open, actual.id])
@@ -67,6 +70,8 @@ export default function GuiaSistema({ open, onClose }: { open: boolean; onClose:
   if (!open) return null
 
   return (
+    <>
+    <div className="guia-velo" aria-hidden />
     <aside className="guia-panel" role="dialog" aria-labelledby="guia-titulo">
       <p className="guia-kicker">Guía · bloque {paso + 1} de {PASOS.length}</p>
       <h3 id="guia-titulo">{actual.titulo}</h3>
@@ -96,5 +101,6 @@ export default function GuiaSistema({ open, onClose }: { open: boolean; onClose:
         </div>
       </div>
     </aside>
+    </>
   )
 }

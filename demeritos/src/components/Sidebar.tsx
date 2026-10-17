@@ -85,7 +85,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         />
       )}
 
-      <aside className={`app-sidebar${isOpen ? ' open' : ''}`}>
+      <aside className={`app-sidebar${isOpen ? ' open' : ''}`} data-guia="menu">
         <div className="app-sidebar__layer app-sidebar__layer--back" aria-hidden />
         <div className="app-sidebar__layer app-sidebar__layer--mid" aria-hidden />
         <div className="app-sidebar__panel">
@@ -108,7 +108,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </span>
         </div>
 
-        <nav className="app-sidebar-nav" data-guia="menu">
+        <nav className="app-sidebar-nav">
           {items.map(item => (
             <Link
               key={item.href}
