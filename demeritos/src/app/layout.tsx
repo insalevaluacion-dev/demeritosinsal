@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
+import FichaSistema from '@/components/FichaSistema'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={poppins.className} suppressHydrationWarning>
         <AuthProvider>
           {children}
+          <FichaSistema />
         </AuthProvider>
       </body>
     </html>
