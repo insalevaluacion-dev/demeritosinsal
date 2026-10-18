@@ -1996,3 +1996,234 @@ body.guia-menu .app-sidebar {
     transition-duration: 0.01ms !important;
   }
 }
+
+html.entrada-pendiente {
+  background: #061e3d;
+}
+
+.entrada {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(244, 178, 77, 0.18), transparent 26%),
+    radial-gradient(circle at 50% 42%, #1a62b0 0%, #0c3d78 42%, #061e3d 100%);
+  clip-path: circle(150% at 50% 42%);
+}
+
+.entrada--sale {
+  animation: entradaSale 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
+.entrada__luz,
+.entrada__barrido {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+}
+
+.entrada__luz {
+  background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.16), transparent 34%);
+  animation: entradaPulso 2.4s ease-in-out infinite;
+}
+
+.entrada__barrido {
+  background: linear-gradient(115deg, transparent 36%, rgba(255, 255, 255, 0.16) 48%, transparent 60%);
+  transform: translateX(-70%);
+  animation: entradaBarrido 1.6s 0.35s ease-out both;
+}
+
+.entrada__punto {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f4b24d;
+  opacity: 0;
+  animation: entradaPunto 2.2s ease-in-out infinite;
+}
+
+.entrada__punto--1 { top: 18%; left: 16%; animation-delay: 0.1s; }
+.entrada__punto--2 { top: 26%; right: 18%; animation-delay: 0.4s; }
+.entrada__punto--3 { bottom: 22%; left: 20%; animation-delay: 0.7s; width: 4px; height: 4px; }
+.entrada__punto--4 { bottom: 18%; right: 22%; animation-delay: 0.2s; }
+.entrada__punto--5 { top: 42%; left: 8%; animation-delay: 0.9s; width: 4px; height: 4px; background: #fff; }
+.entrada__punto--6 { top: 14%; left: 48%; animation-delay: 0.55s; width: 3px; height: 3px; background: #fff; }
+.entrada__punto--7 { bottom: 30%; right: 10%; animation-delay: 1s; background: #fff; }
+.entrada__punto--8 { top: 62%; right: 16%; animation-delay: 0.3s; width: 3px; height: 3px; }
+
+.entrada__centro {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+  padding: 0 24px;
+}
+
+.entrada__medalla {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  margin: 0 auto 22px;
+}
+
+.entrada__aro {
+  position: absolute;
+  inset: 0;
+  width: 148px;
+  height: 148px;
+  transform: rotate(-90deg);
+}
+
+.entrada__aro-base,
+.entrada__aro-trazo {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.entrada__aro-base {
+  stroke: rgba(255, 255, 255, 0.18);
+}
+
+.entrada__aro-trazo {
+  stroke: #f4b24d;
+  stroke-linecap: round;
+  stroke-dasharray: 402;
+  stroke-dashoffset: 402;
+  animation: entradaAro 1.15s 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.entrada__orbita {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px dashed rgba(244, 178, 77, 0.55);
+  animation: entradaGiro 8s linear infinite;
+}
+
+.entrada__logo {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.08), 0 18px 40px rgba(0, 0, 0, 0.28);
+  animation: entradaLogo 0.9s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.entrada__kicker {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  animation: entradaSube 0.7s 0.7s both;
+}
+
+.entrada__titulo {
+  margin: 10px 0 0;
+  font-size: 34px;
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.entrada__titulo span {
+  display: block;
+  animation: entradaSube 0.7s both;
+}
+
+.entrada__titulo span:nth-child(2) {
+  animation-delay: 0.86s;
+  color: #f4b24d;
+}
+
+.entrada__linea {
+  width: 0;
+  height: 2px;
+  margin: 16px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #f4b24d, transparent);
+  animation: entradaLinea 0.7s 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.entrada__chips {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entrada__chips li {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  animation: entradaSube 0.55s both;
+}
+
+.entrada__chips li:nth-child(1) { animation-delay: 1.3s; }
+.entrada__chips li:nth-child(2) { animation-delay: 1.42s; }
+.entrada__chips li:nth-child(3) { animation-delay: 1.54s; }
+
+@keyframes entradaLogo {
+  from { opacity: 0; transform: scale(0.62); filter: blur(8px); }
+  to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+@keyframes entradaAro {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes entradaGiro {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes entradaSube {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes entradaLinea {
+  to { width: 148px; }
+}
+
+@keyframes entradaPulso {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes entradaBarrido {
+  to { transform: translateX(70%); }
+}
+
+@keyframes entradaPunto {
+  0%, 100% { opacity: 0; transform: translateY(8px); }
+  40% { opacity: 0.9; }
+  70% { opacity: 0.2; transform: translateY(-10px); }
+}
+
+@keyframes entradaSale {
+  to {
+    clip-path: circle(0% at 50% 42%);
+    opacity: 0.2;
+  }
+}
+
+@media (max-width: 520px) {
+  .entrada__titulo { font-size: 28px; }
+}

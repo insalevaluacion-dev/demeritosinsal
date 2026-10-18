@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
+import Script from 'next/script'
 import { AuthProvider } from '@/context/AuthContext'
 import FichaSistema from '@/components/FichaSistema'
+import EntradaApp from '@/components/EntradaApp'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -42,8 +44,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={poppins.variable} suppressHydrationWarning>
       <body className={poppins.className} suppressHydrationWarning>
+        <Script id="entrada-app" strategy="beforeInteractive">
+          {`try{if(!sessionStorage.getItem('insal-entrada-vista')&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('entrada-pendiente')}catch(e){}`}
+        </Script>
         <AuthProvider>
           {children}
+          <EntradaApp />
           <FichaSistema />
         </AuthProvider>
       </body>
