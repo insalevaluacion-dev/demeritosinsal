@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 
-const CLAVE = 'insal-entrada-vista'
 const CHIPS = ['Deméritos', 'Reconocimientos', 'Redenciones']
 
 export default function EntradaApp() {
@@ -13,26 +12,20 @@ export default function EntradaApp() {
     let pendiente = root.classList.contains('entrada-pendiente')
     if (!pendiente) {
       try {
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        pendiente = !reduce && !sessionStorage.getItem(CLAVE)
+        pendiente = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
       } catch {
-        pendiente = false
+        pendiente = true
       }
       if (pendiente) root.classList.add('entrada-pendiente')
     }
     if (!pendiente) return
 
     setFase('in')
-    const sale = window.setTimeout(() => setFase('out'), 2900)
+    const sale = window.setTimeout(() => setFase('out'), 4500)
     const fin = window.setTimeout(() => {
-      try {
-        sessionStorage.setItem(CLAVE, '1')
-      } catch {
-        /* la visita igual termina */
-      }
       root.classList.remove('entrada-pendiente')
       setFase('off')
-    }, 3700)
+    }, 5300)
 
     return () => {
       window.clearTimeout(sale)
