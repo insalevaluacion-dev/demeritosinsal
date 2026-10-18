@@ -1430,6 +1430,36 @@ tr:last-child td { border-bottom: none; }
   font-weight: 600;
 }
 
+.aviso-demerito {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--soft);
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.aviso-demerito--1 {
+  background: #fff6e8;
+  border-color: #f0c27a;
+  color: #8a4b08;
+}
+
+.aviso-demerito--2 {
+  background: #fff1e6;
+  border-color: #f0b27a;
+  color: #9a3d12;
+}
+
+.aviso-demerito--3 {
+  background: #ffeaea;
+  border-color: #f0a8a8;
+  color: #9b1c1c;
+}
+
 .esp-bars__link {
   display: block;
   color: inherit;

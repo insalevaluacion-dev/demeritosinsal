@@ -7,6 +7,7 @@ import Link from 'next/link'
 import AppIcon, { type AppIconName } from '@/components/AppIcon'
 import PageHero from '@/components/PageHero'
 import { expedientePath, normalizeNie } from '@/lib/nie'
+import { nivelAlertaDemeritos, textoProximoDemerito } from '@/lib/alerta-demerito'
 
 export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) {
   const { authFetch, user } = useAuth()
@@ -25,6 +26,9 @@ export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) 
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
   const [submitError, setSubmitError] = useState('')
+  const [activos, setActivos] = useState<number | null>(null)
+  const [contando, setContando] = useState(false)
+  const [pedirConfirmacion, setPedirConfirmacion] = useState(false)
 
   useEffect(() => {
     authFetch('/api/causales')
@@ -38,6 +42,36 @@ export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) 
         .catch(() => {})
     }
   }, [authFetch, preNie])
+
+  useEffect(() => {
+    const nie = estudianteSelected?.nie
+    if (!nie) {
+      setActivos(null)
+      setContando(false)
+      setPedirConfirmacion(false)
+      return
+    }
+    let cancel = false
+    setContando(true)
+    setActivos(null)
+    setPedirConfirmacion(false)
+    authFetch(`/api/demeritos?nie=${encodeURIComponent(normalizeNie(nie))}&limit=1`)
+      .then(async (r) => {
+        const data = await r.json()
+        if (cancel) return
+        setActivos(r.ok && typeof data.activos === 'number' ? data.activos : null)
+      })
+      .catch(() => {
+        if (!cancel) setActivos(null)
+      })
+      .finally(() => {
+        if (!cancel) setContando(false)
+      })
+    return () => { cancel = true }
+  }, [estudianteSelected?.nie, authFetch])
+
+  const proyectado = activos == null ? null : activos + 1
+  const nivelProximo = proyectado == null ? 0 : nivelAlertaDemeritos(proyectado)
 
   const searchEstudiantes = async () => {
     if (!busqueda.trim()) return
@@ -64,9 +98,9 @@ export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) 
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const registrar = async () => {
     if (!estudianteSelected || !causalId) return
+    setPedirConfirmacion(false)
     setLoading(true)
     setSubmitError('')
     const causal = causales.find((c: any) => c.id_causal == causalId)
@@ -94,6 +128,16 @@ export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) 
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!estudianteSelected || !causalId || contando) return
+    if (nivelProximo >= 1) {
+      setPedirConfirmacion(true)
+      return
+    }
+    void registrar()
   }
 
   if (result) {
@@ -199,6 +243,15 @@ export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) 
               </div>
             )}
           </>
+        )}
+        {estudianteSelected && (
+          <p className={`aviso-demerito aviso-demerito--${contando ? 0 : nivelProximo}`}>
+            {contando
+              ? 'Revisando cuántos deméritos activos tiene…'
+              : activos == null
+                ? 'No se pudo contar el historial. Al guardar igual se revisa el límite.'
+                : textoProximoDemerito(activos)}
+          </p>
         )}
       </div>
 
@@ -315,16 +368,40 @@ export default function NuevoDemeritoPage({ preNie = '' }: { preNie?: string }) 
           <button
             type="submit"
             className="btn-danger"
-            disabled={!estudianteSelected || !causalId || loading}
+            disabled={!estudianteSelected || !causalId || loading || contando}
             style={{ flex: 1, justifyContent: 'center', padding: 14, fontSize: 15, display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            {loading ? 'Registrando...' : <><AppIcon name="demerito" size={16} /> Registrar Demérito</>}
+            {loading ? 'Registrando...' : contando ? 'Revisando…' : <><AppIcon name="demerito" size={16} /> Registrar Demérito</>}
           </button>
           <Link href="/dashboard/estudiantes" className="btn-outline" style={{ textDecoration: 'none', padding: '14px 20px' }}>
             Cancelar
           </Link>
         </div>
       </form>
+
+      {pedirConfirmacion && proyectado != null && (
+        <div className="modal-overlay" onClick={() => setPedirConfirmacion(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <h3 style={{ fontWeight: 800, marginBottom: 8, fontSize: 16 }}>
+              {nivelProximo >= 3 ? 'No puede ser promovido' : nivelProximo === 2 ? 'Suspensión de privilegios' : 'Avisar a la familia'}
+            </h3>
+            <p style={{ fontSize: 14, lineHeight: 1.45, marginBottom: 8 }}>
+              {estudianteSelected?.nombre_completo} pasará de {activos} a {proyectado} deméritos activos.
+            </p>
+            <p style={{ fontSize: 14, lineHeight: 1.45, color: 'var(--soft)', marginBottom: 20 }}>
+              {textoProximoDemerito(activos ?? 0)}
+            </p>
+            <div className="modal-actions">
+              <button type="button" className="btn-danger" onClick={() => void registrar()} disabled={loading} style={{ flex: 1 }}>
+                {loading ? 'Registrando...' : 'Registrar de todos modos'}
+              </button>
+              <button type="button" className="btn-outline" onClick={() => setPedirConfirmacion(false)}>
+                Volver
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

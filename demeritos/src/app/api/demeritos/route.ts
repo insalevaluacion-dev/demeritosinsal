@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
 import { query } from '@/lib/db'
 import { normalizeNie } from '@/lib/nie'
+import { nivelAlertaDemeritos, tituloAlertaDemeritos } from '@/lib/alerta-demerito'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -51,11 +52,21 @@ export async function GET(req: NextRequest) {
       nie ? [nie] : []
     )
 
+    let activos: number | undefined
+    if (nie) {
+      const activosResult = await query(
+        `SELECT COUNT(*)::int AS total FROM demeritos WHERE REPLACE(TRIM(nie), ' ', '') = $1 AND redimido = false`,
+        [nie]
+      )
+      activos = Number(activosResult.rows[0]?.total ?? 0)
+    }
+
     return NextResponse.json({
       demeritos: result.rows,
       total: parseInt(countResult.rows[0].count),
       page,
       limit,
+      ...(activos !== undefined ? { activos } : {}),
     })
   } catch (e) {
     console.error('[demeritos GET]', e)
@@ -137,18 +148,8 @@ export async function POST(req: NextRequest) {
     )
     const total = countResult.rows[0]?.total ?? 0
 
-    let nivel_alerta = 0
-    let titulo = 'Nuevo Demérito Registrado'
-    if (total >= 15) {
-      nivel_alerta = 3
-      titulo = 'CRÍTICO: Alumno no puede ser promovido'
-    } else if (total >= 10) {
-      nivel_alerta = 2
-      titulo = 'Suspensión de privilegios'
-    } else if (total >= 6) {
-      nivel_alerta = 1
-      titulo = 'Comunicar a familia'
-    }
+    const nivel_alerta = nivelAlertaDemeritos(total)
+    const titulo = tituloAlertaDemeritos(nivel_alerta)
 
     let mensaje = `${est.nombre_completo} | Causal ${causal_letra} | Por: ${payload.nombre || maestroCheck.rows[0].nombre}`
     if (es_externo) mensaje += '\n[Docente externo a la sección]'
