@@ -45,7 +45,7 @@ export default function FichaSistema() {
               </div>
               <div>
                 <dt>Asistente de desarrollo</dt>
-                <dd>José Javier Bojorquéz Menjivar</dd>
+                <dd>José Javier Bojórquez Menjivar</dd>
               </div>
               <div>
                 <dt>Versión</dt>
